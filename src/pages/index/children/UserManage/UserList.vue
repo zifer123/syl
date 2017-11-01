@@ -1,5 +1,5 @@
 <template>
   <div>
-    微信菜单
+    用户列表
   </div>
 </template>

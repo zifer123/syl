@@ -1,5 +1,5 @@
 <template>
   <div>
-    微信菜单
+    司机组
   </div>
 </template>

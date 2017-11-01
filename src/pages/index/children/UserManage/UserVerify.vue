@@ -1,5 +1,5 @@
 <template>
   <div>
-    微信菜单
+    用户审核
   </div>
 </template>
