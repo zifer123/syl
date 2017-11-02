@@ -16,6 +16,7 @@ new Vue({
           path: 'wxSet',
           title: '微信设置',
           show: true,
+          icon: 'icon-wxSet',
           children: [
             {
               path: 'wxMenu',
@@ -34,6 +35,7 @@ new Vue({
           path: 'userManage',
           title: '用户管理',
           show: true,
+          icon: 'icon-userManage',
           children: [
             {
               path: 'userList',
@@ -67,6 +69,7 @@ new Vue({
           path: 'orderManage',
           title: '订单管理',
           show: true,
+          icon: 'icon-orderManage',
           children: [
             {
               path: 'orderList',
@@ -105,6 +108,7 @@ new Vue({
           path: 'areaManage',
           show: true,
           title: '区域管理',
+          icon: 'icon-areaSet',
           children: [
             {
               path: 'lineList',
@@ -123,6 +127,7 @@ new Vue({
           path: 'finance',
           title: '财务',
           show: true,
+          icon: 'icon-finance',
           children: [
             {
               path: 'receiptVerify',
@@ -151,6 +156,7 @@ new Vue({
           path: 'adminSet',
           title: '管理员设置',
           show: true,
+          icon: 'icon-adminSet',
           children: [
             {
               path: 'adminList',

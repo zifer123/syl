@@ -169,6 +169,7 @@ const routes = [
     path: '/',
     name: 'Index',
     component: Index,
+    redirect: '/home/dashBoard',
     children: allRoutes
   },
   {

@@ -1,5 +1,5 @@
 <template>
   <div>
-    费用设置
+    首页面板
   </div>
 </template>
