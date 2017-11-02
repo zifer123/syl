@@ -255,6 +255,25 @@
           label="配送状态"
           width="120">
         </el-table-column>
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="220">
+          <template slot-scope="scope">
+            <el-button
+              @click.native.prevent="deleteRow(scope.$index, scope.row)"
+              type="primary"
+              size="small">
+              编辑
+            </el-button>
+            <el-button
+              @click.native.prevent="deleteRow(scope.$index, tableData4)"
+              type="info"
+              size="small">
+              打印
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-main>
   </el-container>
@@ -556,6 +575,10 @@
       }
     },
     methods: {
+      deleteRow(a,b) {
+        console.log(a);
+        console.log(b);
+      },
       showHeader() {
           console.log(this.headerShow);
         this.headerShow = !this.headerShow;
