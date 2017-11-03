@@ -8,6 +8,7 @@
           background-color="#545c64"
           text-color="#fff"
           unique-opened
+          style="height: 100%;"
           active-text-color="#ffd04b">
           <el-submenu v-for="item in newRoutes" :key="item.path" :index="item.path">
             <template slot="title">
@@ -45,7 +46,7 @@
         activeNav: 'dashBoard',
         newRoutes: [],
         rightRoutes: [],// 保存路由和title
-        rightRoutesArr: ['/home/dashBoard'],// 只保存路由,用来判断是否已经存在
+        rightRoutesArr: ['/home/dashBoard'],// 只保存路由,用来判断是否已经存在,默认首页已经开启
         rightRoutesActive: '/home/dashBoard'
       }
     },
@@ -74,8 +75,25 @@
           path: tab.name
         });
       },
-      removeTab() {
-        console.log(2);
+      removeTab(a) {
+        /* a为路由信息（tab的name） */
+        if(a == '/home/dashBoard') {
+          this.$message({
+            showClose: true,
+            message: '首页不允许关闭',
+            type: 'warning'
+          });
+        }else {
+          let index = this.rightRoutesArr.indexOf(a);
+          this.rightRoutesArr.splice(index,1);// arr因为默认有一个首页路由
+          this.rightRoutes.splice(index-1,1);// 而rightRoutes只保存了点击添加的路由，并没有首页，所以要减去1
+          /* 判断关闭的是否是active */
+          if(this.rightRoutesActive == a) {
+            /* 如果关闭的是处于active的，则让arr最后一个变成active */
+            this.rightRoutesActive = this.rightRoutesArr[this.rightRoutesArr.length-1];
+            this.$router.push(this.rightRoutesArr[this.rightRoutesArr.length-1]);
+          }
+        }
       }
     },
     created() {
@@ -83,13 +101,23 @@
       /* 初始化菜单 */
       this.newRoutes = JSON.parse(newRoutes);
       /* 第一次应该路由加载的是 */
+      this.$router.push('/home/dashBoard');
     }
   }
 </script>
 
 <style>
+  .el-tabs__header {
+    background: #f5f5f5;
+  }
+  .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+    border-bottom-color: silver;
+  }
   .page-header {
     border-bottom: 1px solid #ccc;
+  }
+  .el-container {
+    height: 100%;
   }
   .el-main {
     padding: 0;

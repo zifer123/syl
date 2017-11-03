@@ -19,5 +19,10 @@ export default {
 </script>
 
 <style>
-
+  html,body {
+    height: 100%;
+  }
+  #app {
+    height: 100%;
+  }
 </style>
