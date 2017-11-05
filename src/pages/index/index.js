@@ -34,10 +34,12 @@ if(localStorage.getItem('routes')) {
   personalRoutes.sort();
   firstRoutes.sort();
   /* 筛选第二级 */
+  console.log(firstRoutes);
+  console.log(personalRoutes);
   for(let i=0;i<firstRoutes.length;i++) {
     let childrens = firstRoutes[i].children;
     for(let j=0;j<childrens.length;j++) {
-      if(!personalRoutes[j].show) {
+      if(!personalRoutes[i].children[j].show) {
         /* 把对应的删除掉 */
         childrens.splice(j,1);
       }
