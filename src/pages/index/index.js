@@ -51,6 +51,9 @@ if(localStorage.getItem('routes')) {
           /* 把对应的删除掉 */
           childrens.splice(j,1);
         }
+      }else {
+        /* 如果对应的children不存在，则删掉 */
+        childrens.splice(j,1);
       }
     }
   }

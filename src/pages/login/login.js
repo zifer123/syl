@@ -175,7 +175,7 @@ new Vue({
             },
             {
               path: 'fareSet',
-              show: true,
+              show: false,
               title: '费用设置'
             }
           ]
@@ -184,13 +184,27 @@ new Vue({
         {
           path: 'echart',
           title: 'echart',
-          show: true,
+          show: false,
           icon: 'icon-adminSet',
           children: [
             {
               path: 'bar',
-              show: true,
+              show: false,
               title: '柱状图'
+            }
+          ]
+        },
+
+        {
+          path: 'editor',
+          title: '富文本',
+          show: true,
+          icon: 'icon-adminSet',
+          children: [
+            {
+              path: 'markDown',
+              show: true,
+              title: 'markDown编辑器'
             }
           ]
         }

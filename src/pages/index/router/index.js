@@ -174,6 +174,19 @@ let allRoutes = [
         component: resolve => require(['../children/Echart/Bar.vue'],resolve)
       }
     ]
+  },
+
+  {
+    path: 'editor',
+    title: '富文本',
+    component: resolve => require(['@/components/commonRoute.vue'],resolve),
+    children: [
+      {
+        path: 'markDown',
+        title: 'markDown编辑器',
+        component: resolve => require(['../children/Editor/MarkDown.vue'],resolve)
+      }
+    ]
   }
 ];
 import Index from '../main/Index.vue'
