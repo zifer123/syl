@@ -39,7 +39,12 @@ if(localStorage.getItem('routes')) {
   for(let i=0;i<firstRoutes.length;i++) {
     let childrens = firstRoutes[i].children;
     for(let j=0;j<childrens.length;j++) {
-      if(!personalRoutes[i].children[j].show) {
+      if(personalRoutes[i].children[j]) {
+        if(!personalRoutes[i].children[j].show) {
+          /* 把对应的删除掉 */
+          childrens.splice(j,1);
+        }
+      }else {
         /* 把对应的删除掉 */
         childrens.splice(j,1);
       }
