@@ -4,6 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import Router from 'vue-router'
 import ElementUI from 'element-ui'
+/* 按需引入，先引入基本的echarts，然后如果各组件想要引用某个，可以引入单独的 */
+import echarts from 'echarts/lib/echarts'
+Vue.prototype.$echarts = echarts
+/* （好多页面可能会用到 ） */
+require('echarts/lib/component/tooltip')
+require('echarts/lib/component/title')
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/reset.css'
 import './assets/iconfont/iconfont.css'
@@ -39,9 +45,12 @@ if(localStorage.getItem('routes')) {
   for(let i=0;i<firstRoutes.length;i++) {
     let childrens = firstRoutes[i].children;
     for(let j=0;j<childrens.length;j++) {
-      if(!personalRoutes[i].children[j].show) {
-        /* 把对应的删除掉 */
-        childrens.splice(j,1);
+      /* 利用对象访问第一级不会报错的特性 */
+      if(personalRoutes[i].children[j]) {
+        if(!personalRoutes[i].children[j].show) {
+          /* 把对应的删除掉 */
+          childrens.splice(j,1);
+        }
       }
     }
   }

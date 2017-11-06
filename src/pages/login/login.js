@@ -179,6 +179,20 @@ new Vue({
               title: '费用设置'
             }
           ]
+        },
+
+        {
+          path: 'echart',
+          title: 'echart',
+          show: true,
+          icon: 'icon-adminSet',
+          children: [
+            {
+              path: 'bar',
+              show: true,
+              title: '柱状图'
+            }
+          ]
         }
       ];
       /* 过滤路由，把要显示了路由存储（权限管理） */

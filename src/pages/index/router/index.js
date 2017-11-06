@@ -161,6 +161,19 @@ let allRoutes = [
         component: resolve => require(['../children/AdminSet/FareSet.vue'],resolve)
       }
     ]
+  },
+
+  {
+    path: 'echart',
+    title: 'echart',
+    component: resolve => require(['@/components/commonRoute.vue'],resolve),
+    children: [
+      {
+        path: 'bar',
+        title: '柱状图',
+        component: resolve => require(['../children/Echart/Bar.vue'],resolve)
+      }
+    ]
   }
 ];
 import Index from '../main/Index.vue'
