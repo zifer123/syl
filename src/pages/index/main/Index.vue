@@ -23,7 +23,7 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <el-tabs v-model="rightRoutesActive" type="card" closable @tab-click="clickTab" @tab-remove="removeTab">
+        <el-tabs class="fixedTab" v-model="rightRoutesActive" type="card" closable @tab-click="clickTab" @tab-remove="removeTab">
           <el-tab-pane name="/home/dashBoard" label="主页面板"></el-tab-pane>
           <el-tab-pane
             v-for="(item, index) in rightRoutes"
@@ -33,7 +33,7 @@
           >
           </el-tab-pane>
         </el-tabs>
-        <router-view></router-view>
+        <router-view style="margin-top: 41px;"></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -107,6 +107,11 @@
 </script>
 
 <style>
+  .fixedTab {
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+  }
   .el-tabs__header {
     background: #f5f5f5;
   }
