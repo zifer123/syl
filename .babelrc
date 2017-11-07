@@ -3,16 +3,12 @@
     ["env", { "modules": false }],
     "stage-2"
   ],
-  "plugins": [
-    "transform-runtime",
-    ["component", [
-      {
-        "libraryName": "element-ui",
-        "styleLibraryName": "theme-chalk"
-      }
-    ]
-    ]
-  ],
+  "plugins": [["component", [
+    {
+      "libraryName": "element-ui",
+      "styleLibraryName": "theme-chalk"
+    }
+  ]],"transform-runtime"],
   "env": {
     "test": {
       "presets": ["env", "stage-2"],
