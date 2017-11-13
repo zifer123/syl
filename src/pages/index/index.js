@@ -158,6 +158,9 @@ import Router from 'vue-router'
 Vue.use(Router)
 import routes from './router'
 
+import Axios from 'axios'
+Vue.prototype.$http = Axios
+
 Vue.config.productionTip = false
 
 /* 判断是否登录过 */

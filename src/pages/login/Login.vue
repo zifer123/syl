@@ -33,6 +33,10 @@
     },
     methods: {
       register() {
+          this.$http.get('/api/users').then(function(data) {
+            console.log(data);
+          });
+          return;
         let routes = [
           {
             path: 'wxSet',
