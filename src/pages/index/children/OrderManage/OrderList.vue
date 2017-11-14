@@ -180,16 +180,20 @@
           </div>
         </el-col>
       </el-row>
-      <el-button>搜索</el-button>
+      <el-button @click="orderSearch">搜索</el-button>
 
     </el-header>
     <el-main>
       <el-table
         :data="orderInfo"
+        v-loading="tableLoading"
         height="450"
         style="width: 100%;">
         <el-table-column
           fixed
+          type="index">
+        </el-table-column>
+        <el-table-column
           prop="date"
           sortable
           label="日期"
@@ -198,7 +202,7 @@
         <el-table-column
           prop="sn"
           label="单号"
-          width="120">
+          width="150">
         </el-table-column>
         <el-table-column
           prop="merchat"
@@ -264,6 +268,84 @@
           label="配送状态"
           width="120">
         </el-table-column>
+
+        <el-table-column label="联系方式">
+          <el-table-column
+            prop="xianfu"
+            label="维修厂"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="dapfu"
+            label="汽配商"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="yuejie"
+            label="月结"
+            width="120">
+          </el-table-column>
+        </el-table-column>
+
+        <el-table-column label="扫描时间">
+          <el-table-column
+            prop="xianfu"
+            label="第一次扫描"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="dapfu"
+            label="第二次扫描"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="yuejie"
+            label="第三次扫描"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            prop="yuejie"
+            label="第四次扫描"
+            width="120">
+          </el-table-column>
+        </el-table-column>
+
+        <el-table-column
+          prop="detination"
+          width="150"
+          label="目的地">
+        </el-table-column>
+
+        <el-table-column
+          prop="detination"
+          width="150"
+          label="配送地址">
+        </el-table-column>
+
+        <el-table-column
+          prop="detination"
+          width="150"
+          label="录单员结算">
+        </el-table-column>
+
+        <el-table-column
+          prop="detination"
+          width="150"
+          label="配送员结算">
+        </el-table-column>
+
+        <el-table-column
+          prop="detination"
+          width="150"
+          label="账单生成">
+        </el-table-column>
+
+        <el-table-column
+          prop="detination"
+          width="150"
+          label="汽配商结算">
+        </el-table-column>
+
         <el-table-column
           fixed="right"
           label="操作"
@@ -603,7 +685,8 @@
             cash: '',
             guazhang: 85
           }
-        ]// 订单信息
+        ],// 订单信息
+        tableLoading: false// 订单加载状态
       }
     },
     methods: {
@@ -631,6 +714,13 @@
         this.$http.get('/api/test.json').then(function(data) {
             console.log(data);
         })
+      },
+      /* 订单查询 */
+      orderSearch() {
+        this.tableLoading = true;
+        setTimeout(function() {
+          this.tableLoading = false;
+        }.bind(this),2000)
       },
       /* 筛选汽配商 */
       filterMerchat(queryString,cb) {
@@ -813,7 +903,7 @@
     created() {
       this.getResults();
       this.merchatInfo = this.loadMerchatInfo();
-      this.workShopInfo = this.loadMerchatInfo();
+      this.workShopInfo = this.loadWorkShopInfo();
       this.recordStaffInfo = this.loadRecordStaffInfo();
     }
   }
@@ -829,6 +919,9 @@
   }
   .flexBox .item {
     flex: 1;
+  }
+  .el-table--border td, .el-table--border th {
+    border-right: 1px solid #e6ebf5 !important;
   }
   .el-col {
     margin: 10px 0;

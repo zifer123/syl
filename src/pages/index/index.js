@@ -150,7 +150,6 @@ Vue.prototype.$echarts = echarts
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
-
 import './assets/css/reset.css'
 import './assets/iconfont/iconfont.css'
 
