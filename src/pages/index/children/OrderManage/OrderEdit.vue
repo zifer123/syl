@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="12">
+    <el-col :span="16">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
         <el-form-item label="订单编号">
           <el-input v-model="ruleForm.sn"></el-input>
@@ -9,6 +9,7 @@
           <el-autocomplete v-model="ruleForm.merchat"
             :fetch-suggestions="filterMerchat"
             placeholder="选择汽配商"
+            style="width: 100%;"
             @select="merchatSelect">
             <template slot-scope="props">
               <div>{{ props.item.name }}</div>
@@ -25,6 +26,7 @@
           <el-autocomplete v-model="ruleForm.workshop"
             :fetch-suggestions="filterWorkshop"
             placeholder="选择维修厂"
+            style="width: 100%;"
             @select="workshopSelect">
             <template slot-scope="props">
               <div>{{ props.item.name }}</div>
@@ -38,44 +40,67 @@
         </el-form-item>
 
         <el-form-item label="货物" required>
-          <el-col :span="8">
-            <el-input placeholder="总金额"></el-input>
+          <el-col :span="5">
+            <el-form-item prop="totalPrice" :rules="[
+              { required: true, message: '请输入'},
+              { type: 'number', message: '请输入正确的数值'}
+            ]"
+            >
+              <el-input  placeholder="总金额" v-model.number="ruleForm.totalPrice"></el-input>
+            </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-input placeholder="数量"></el-input>
+          <el-col :span="2" style="text-align: center;">-</el-col>
+          <el-col :span="5">
+            <el-form-item prop="productNum" :rules="[
+              { required: true, message: '请输入'},
+              { type: 'number', message: '请输入正确的数值'}
+            ]">
+              <el-input placeholder="数量" v-model.number="ruleForm.productNum"></el-input>
+            </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="11" :offset="1">
+            <el-radio v-model="ruleForm.paymentMode" label="cash">现金</el-radio>
+            <el-radio v-model="ruleForm.paymentMode" label="onAccount">挂账</el-radio>
+          </el-col>
+        </el-form-item>
 
-          </el-col>
-        </el-form-item>
-        <el-form-item label="即时配送" prop="delivery">
-          <el-switch v-model="ruleForm.delivery"></el-switch>
-        </el-form-item>
-        <el-form-item label="活动性质" prop="type">
-          <el-checkbox-group v-model="ruleForm.type">
-            <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-            <el-checkbox label="地推活动" name="type"></el-checkbox>
-            <el-checkbox label="线下主题活动" name="type"></el-checkbox>
-            <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
+        <el-form-item label="特殊选项" prop="options">
+          <el-checkbox-group v-model="ruleForm.options">
+            <el-checkbox v-for="option in options" :label="option.id" :key="option.id">{{option.name}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="特殊资源" prop="resource">
-          <el-radio-group v-model="ruleForm.resource">
-            <el-radio label="线上品牌商赞助"></el-radio>
-            <el-radio label="线下场地免费"></el-radio>
-          </el-radio-group>
+
+        <el-form-item label="运费明细" prop="freight">
+          <el-tag>总价: {{ allPrice }}元</el-tag>
+          <el-tag>手续费: <span v-text="state.handFare"></span>元</el-tag>
+          <el-tag>偏远地区: <span v-text="state.remoteAreaFare"></span>元</el-tag>
+          <el-tag>汽配商: <span v-text="state.merchatFare"></span>元</el-tag>
+          <el-tag>维修厂: <span v-text="state.workshopFare"></span>元</el-tag>
+          <el-tag>特殊: <span v-text="state.optionsFare"></span>元</el-tag>
         </el-form-item>
-        <el-form-item label="活动形式" prop="desc">
-          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+
+        <el-form-item label="结算方式" prop="freightPaymentMode">
+          <el-radio v-model="ruleForm.freightPaymentMode" label="1">月结</el-radio>
+          <el-radio v-model="ruleForm.freightPaymentMode" label="2">现付</el-radio>
+          <el-radio v-model="ruleForm.freightPaymentMode" label="2">到付</el-radio>
         </el-form-item>
+
+        <el-form-item label="仓库选择" prop="desc">
+          <el-radio v-model="ruleForm.warehouse" label="1">淡水仓</el-radio>
+          <el-radio v-model="ruleForm.warehouse" label="2">奥特仓</el-radio>
+          <el-radio v-model="ruleForm.warehouse" label="2">远古仓</el-radio>
+        </el-form-item>
+
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button type="primary" @click="submitForm('ruleForm')">提交并打印</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
       </el-form>
     </el-col>
 
-    <el-col :span="12"></el-col>
+    <el-col :span="8">
+      快速通道
+    </el-col>
   </el-row>
 </template>
 
@@ -86,8 +111,13 @@
         merchatInfo: [],// 汽配商信息
         workshopInfo: [],// 汽配商信息
         state: {
-          merchatMessage: false,
-          workshopMessage: false
+          merchatMessage: false,// 选择汽配商之后的信息
+          workshopMessage: false,// 选择维修厂之后的信息
+          handFare: 0,// 手续费
+          remoteAreaFare: 0,// 偏远费
+          merchatFare: 0,// 汽配商费用
+          workshopFare: 0,// 维修厂费用
+          optionsFare: 0// 特殊费用
         },// 存储状态
         merchatMessage: {
           phone: '',
@@ -99,38 +129,66 @@
           address: '',
           fare: 15
         },// 选择维修厂之后的详细信息
+        options: [
+          {
+            id: 1,
+            name: "前叶子板",
+            fare: 15
+          },
+          {
+            id: 2,
+            name: "保险杠",
+            fare: 15
+          },
+          {
+            id: 3,
+            name: "机盖",
+            fare: 15
+          },
+          {
+            id: 4,
+            name: "车门",
+            fare: 15
+          },
+          {
+            id: 5,
+            name: "重、大、多",
+            fare: 15
+          },
+          {
+            id: 6,
+            name: "偏重、偏大、偏多",
+            fare: 15
+          },
+          {
+            id: 7,
+            name: "超大、超重、超多",
+            fare: 15
+          },
+          {
+            id: 8,
+            name: "特殊件",
+            fare: 15
+          }
+        ],
         ruleForm: {
           name: '',
           merchat: '',
           date1: '',
           date2: '',
-          delivery: false,
+          paymentMode: 'cash',
+          options: [],
+          freightPaymentMode: '1',
           type: [],
           resource: '',
           desc: ''
         },
         rules: {
-          sn: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          merchat: [
+            { required: true, message: '请选择汽配商', trigger: 'blur' }
           ],
-          region: [
-            { required: true, message: '请选择活动区域', trigger: 'change' }
-          ],
-          date1: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-          ],
-          date2: [
-            { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-          ],
-          type: [
-            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-          ],
-          resource: [
-            { required: true, message: '请选择活动资源', trigger: 'change' }
-          ],
-          desc: [
-            { required: true, message: '请填写活动形式', trigger: 'blur' }
+          workshop: [
+            { required: true, message: '请选择维修厂', trigger: 'blur' }
           ]
         }
       }
@@ -246,9 +304,23 @@
         this.$refs[formName].resetFields();
       }
     },
+    computed: {
+      allPrice() {
+        return this.state.handFare+this.state.remoteAreaFare+this.state.merchatFare+this.state.workshopFare+this.state.optionsFare;
+      }
+    },
     created() {
       this.loadMerchatInfo();
       this.loadWorkshopInfo();
     }
   }
 </script>
+
+<style scoped>
+  .flexBox {
+    display: flex;
+  }
+  .flexBox .flexItem {
+    flex: 1;
+  }
+</style>
