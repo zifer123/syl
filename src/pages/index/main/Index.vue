@@ -10,21 +10,21 @@
           unique-opened
           style="height: 100%;"
           active-text-color="#ffd04b">
-          <el-submenu v-for="item in newRoutes" :key="item.path" :index="item.path">
+          <el-submenu v-for="firstRoute in newRoutes" :key="firstRoute.path" :index="firstRoute.path">
             <template slot="title">
-              <i class="iconfont" :class="item.icon"></i>
-              <span>{{ item.title }}</span>
+              <i class="iconfont" :class="firstRoute.icon"></i>
+              <span>{{ firstRoute.title }}</span>
+              <!--<span v-for="secondRoute in firstRoute.children">{{secondRoute.title}}</span>-->
             </template>
-            <el-menu-item v-for="ite in item.children" :key="ite.path" :index="ite.path" @click.native="addTab(`/${item.path}/${ite.path}`,ite.title)">
+            <el-menu-item v-for="secondRoute in firstRoute.children" :key="secondRoute.path" :index="`/${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `/${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
               <i class="el-icon-menu"></i>
-              <span slot="title">{{ ite.title }}</span>
+              <span slot="title">{{ secondRoute.title }}</span>
             </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
       <el-main>
         <el-tabs class="fixedTab" v-model="rightRoutesActive" type="card" closable @tab-click="clickTab" @tab-remove="removeTab">
-          <el-tab-pane name="/home/dashBoard" label="主页面板"></el-tab-pane>
           <el-tab-pane
             v-for="(item, index) in rightRoutes"
             :key="item.name"
@@ -43,63 +43,87 @@
   export default {
     data() {
       return {
-        activeNav: 'dashBoard',
-        newRoutes: [],
-        rightRoutes: [],// 保存路由和title
-        rightRoutesArr: ['/home/dashBoard'],// 只保存路由,用来判断是否已经存在,默认首页已经开启
-        rightRoutesActive: '/home/dashBoard'
+        newRoutes: []
       }
     },
     methods: {
-      addTab(route,title) {
+      addTab(routeInfo) {
+        // 路由还是组件跳，因为vuex只管状态，切记
         this.$router.push({
-          path: route,
-          query: {}
+          path: routeInfo.route
         });
+        let mark = false;
+        console.log(this.$store.state.rightRoutes);
+        for(let i = 0;i<this.$store.state.rightRoutes.length;i++) {
+          if(this.$store.state.rightRoutes[i].name == routeInfo.route) {
+            mark = true;
+            break;
+          }
+        }
         /* 判断右边路由标签有没有 */
-        if(this.rightRoutesArr.indexOf(route)!=-1) {
-          /* 已存在，直接active */
-          this.rightRoutesActive = route;
+        if(mark) {
+          /* 已存在，直接active,这里会触发计算属性rightRoutesActive的setter操作，不必担心 */
+          this.rightRoutesActive = routeInfo.route;
         }else {
-          this.rightRoutesArr.push(route);
-          this.rightRoutesActive = route;// 第一次设置，为了active
-          this.rightRoutes.push({
-            title: title,
-            name: route
-          })
+//          this.rightRoutesArr.push(routeInfo.route);
+          /* 这里会触发计算属性rightRoutesActive的setter操作，不必担心 */
+          this.rightRoutesActive = routeInfo.route;// 第一次设置，为了active
+          this.$store.commit('addTab',routeInfo);
         }
       },
       clickTab(tab) {
-        this.activeNav = tab.name.split('/')[2];
+        /*这里会触发计算属性activeNav的setter操作，不必担心*/
+        this.activeNav = tab.name;
         this.$router.push({
           path: tab.name
         });
       },
-      removeTab(a) {
-        /* a为路由信息（tab的name） */
-        if(a == '/home/dashBoard') {
+      removeTab(tab) {
+        /* tab（tab的name） */
+        if(tab == '/home/dashBoard') {
           this.$message({
             showClose: true,
             message: '首页不允许关闭',
             type: 'warning'
           });
         }else {
-          let index = this.rightRoutesArr.indexOf(a);
-          this.rightRoutesArr.splice(index,1);// arr因为默认有一个首页路由
-          this.rightRoutes.splice(index-1,1);// 而rightRoutes只保存了点击添加的路由，并没有首页，所以要减去1
+          this.$store.commit('removeTab',tab);
           /* 判断关闭的是否是active */
-          if(this.rightRoutesActive == a) {
+          if(this.rightRoutesActive == tab) {
             /* 如果关闭的是处于active的，则让arr最后一个变成active */
-            this.rightRoutesActive = this.rightRoutesArr[this.rightRoutesArr.length-1];
-            this.$router.push(this.rightRoutesArr[this.rightRoutesArr.length-1]);
+            this.rightRoutesActive = this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name;
+            this.$router.push(this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name);
           }
         }
+      }
+    },
+    computed: {
+      /* 获取vuex的状态,给要时时可变的状态定义setter,要在vuex中定义mutaions改变状态，符合vuex逻辑 */
+      activeNav: {
+        get() {
+          return this.$store.state.activeNav;
+        },
+        set(newVal) {
+          this.$store.commit('changeActiveNav',newVal);
+        }
+      },
+      rightRoutesActive: {
+        get() {
+          return this.$store.state.rightRoutesActive;
+        },
+        set(newVal) {
+          this.$store.commit('changeRightRoutesActive',newVal);
+        }
+      },
+      rightRoutes() {
+        return this.$store.state.rightRoutes;
       }
     },
     created() {
       let newRoutes = localStorage.getItem('newRoutes');
       /* 初始化菜单 */
       this.newRoutes = JSON.parse(newRoutes);
+      console.log(this.newRoutes);
       /* 第一次应该路由加载的是 */
       this.$router.push('/home/dashBoard');
     }

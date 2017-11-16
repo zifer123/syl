@@ -160,6 +160,8 @@ import routes from './router'
 import Axios from 'axios'
 Vue.prototype.$http = Axios
 
+import store from './store'
+
 Vue.config.productionTip = false
 
 /* 判断是否登录过 */
@@ -227,6 +229,7 @@ if(localStorage.getItem('routes')) {
   new Vue({
     el: '#app',
     router,
+    store,
     template: '<App/>',
     components: { App }
   });
