@@ -155,7 +155,7 @@ import './assets/iconfont/iconfont.css'
 
 import Router from 'vue-router'
 Vue.use(Router)
-import routes from './router'
+// import routes from './router'
 
 import Axios from 'axios'
 Vue.prototype.$http = Axios
@@ -165,65 +165,45 @@ import store from './store'
 Vue.config.productionTip = false
 
 /* 判断是否登录过 */
-if(localStorage.getItem('routes')) {
-  alert('拿到权限');
-  let personalRoutes = localStorage.getItem('routes');
-  personalRoutes = JSON.parse(personalRoutes);
-  /* 筛选第一级 */
-  let firstRoutes = routes[0].children.filter(function (item) {
-    for(let i=0;i<personalRoutes.length;i++) {
-      if(item.path == personalRoutes[i].path) {
-        item.meta = personalRoutes[i].meta||[];
-        item.icon = personalRoutes[i].icon;
-        return true;
-        break;
-      }
-    }
-  });
-  console.log(firstRoutes);
-  /* 先排序，然后比较（比较好比较） */
-  personalRoutes.sort();
-  firstRoutes.sort();
-  /* 筛选第二级 */
-  console.log(firstRoutes);
-  console.log(personalRoutes);
-  for(let i=0;i<firstRoutes.length;i++) {
-    let childrens = firstRoutes[i].children;
-    for(let j=0;j<childrens.length;j++) {
-      /* 利用对象访问第一级不会报错的特性 */
-      if(personalRoutes[i].children[j]) {
-        if(!personalRoutes[i].children[j].show) {
-          /* 把对应的删除掉 */
-          childrens.splice(j,1);
+if(sessionStorage.getItem('routes')) {
+  let routes = JSON.parse(sessionStorage.getItem('routes'));
+  for(let i = 0;i<routes.length;i++) {
+    routes[i].component = (resolve) => require(['./CommonView.vue'],resolve);
+    for(let j = 0;j<routes[i].children.length;j++) {
+      /* 先判断是否为true，再往下走 */
+      if(routes[i].children[j].show) {
+        routes[i].children[j].component = (resolve) => require(['./CommonView.vue'],resolve);
+        /* 判断是否还有children */
+        if(routes[i].children[j].children&&routes[i].children[j].children.length) {
+          /* 如果还有在循环，顺便加上group */
+          routes[i].children[j].group = true;
+          for(let k = 0;k<routes[i].children[j].children.length;k++) {
+            if(routes[i].children[j].children[k].show) {
+              let first = routes[i].path;
+              let second = routes[i].children[j].path;
+              let third = routes[i].children[j].children[k].path;
+              routes[i].children[j].children[k].component = resolve => require([`./children/${first}/${second}/${third}`],resolve);
+            }
+          }
+        }else {
+          routes[i].children[j].component = (resolve) => require([`./children/${routes[i].path}/${routes[i].children[i].path}`],resolve);
         }
-      }else {
-        /* 如果对应的children不存在，则删掉 */
-        childrens.splice(j,1);
       }
     }
   }
-  /* 先删除routes[0]的children的路由，在补充最新的路由 */
-  routes[0].children.length = 0;
-  /* 添加，首页路由（右边的首页），所有用户拥有首页路由（） */
-  firstRoutes.unshift({
-    path: 'home',
-    title: '首页',
-    icon: 'icon-home',
-    component: resolve => require(['@/components/commonRoute.vue'],resolve),
-    children: [
-      {
-        path: 'dashBoard',
-        title: '主页面板',
-        component: resolve => require(['./children/Home/DashBoard.vue'],resolve)
-      }
-    ]
-  });
-  routes[0].children.push(...firstRoutes);
-  console.log(routes);
-  /* 存取，为了循环菜单的那个vue能拿到.vue能获取到 */
-  localStorage.setItem('newRoutes',JSON.stringify(firstRoutes));
+
+  let newRoutes = [
+    {
+      path: '/',
+      component: resolve => require(['./main/Index.vue'],resolve),
+      children: routes
+    }
+  ];
+
+  console.log(newRoutes);
+  sessionStorage.setItem('newRoutes',JSON.stringify(routes));
   let router = new Router({
-    routes: routes
+    routes: newRoutes
   });
   /* 初始化应用 */
   new Vue({

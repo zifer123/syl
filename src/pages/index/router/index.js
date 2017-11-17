@@ -1,4 +1,5 @@
 /* 注意，由于微信菜单，微信API设置....等路由为第三级路由，Index.vue的router-view只显示第二级路由，需要第三级router-view作跳板，显示第三级路由 */
+/* 温馨提示，hidden字段是作为不需要在左侧显示的路由，只作为按钮级跳转显示 */
 let allRoutes = [
   {
     path: 'wxSet',
@@ -27,6 +28,17 @@ let allRoutes = [
         path: 'userList',
         title: '用户列表',
         component: resolve => require(['../children/UserManage/UserList.vue'],resolve)
+      },
+      {
+        path: 'userAdd',
+        title: '用户添加',
+        component: resolve => require(['../children/UserManage/UserAdd.vue'],resolve)
+      },
+      {
+        path: 'userEdit',
+        title: '用户编辑',
+        hidden: true,
+        component: resolve => require(['../children/UserManage/UserEdit.vue'],resolve)
       },
       {
         path: 'driverGroup',

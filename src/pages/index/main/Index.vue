@@ -12,14 +12,31 @@
           active-text-color="#ffd04b">
           <el-submenu v-for="firstRoute in newRoutes" :key="firstRoute.path" :index="firstRoute.path">
             <template slot="title">
-              <i class="iconfont" :class="firstRoute.icon"></i>
               <span>{{ firstRoute.title }}</span>
-              <!--<span v-for="secondRoute in firstRoute.children">{{secondRoute.title}}</span>-->
             </template>
-            <el-menu-item v-for="secondRoute in firstRoute.children" :key="secondRoute.path" :index="`/${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `/${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
-              <i class="el-icon-menu"></i>
-              <span slot="title">{{ secondRoute.title }}</span>
-            </el-menu-item>
+
+            <!-- 判断是否是group -->
+            <template v-for="secondRoute in firstRoute.children">
+              <template v-if="secondRoute.group">
+                <el-submenu :index="`/${firstRoute.path}/${secondRoute.path}`" :key="`/${firstRoute.path}/${secondRoute.path}`">
+                  <template slot="title">
+                    <i class="el-icon-menu"></i>
+                    <span>{{ secondRoute.title }}</span>
+                  </template>
+                  <!-- 只显示查看和添加，当然，在show为true的情况下 -->
+                  <el-menu-item v-for="thirdRoute in secondRoute.children" v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`/${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`/${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" @click.native="addTab({route: `/${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`,title: `${secondRoute.title}/${thirdRoute.title}`})">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">{{ thirdRoute.title }}</span>
+                  </el-menu-item>
+                </el-submenu>
+              </template>
+              <template v-else>
+                <el-menu-item v-show="!secondRoute.hidden" :key="`/${firstRoute.path}/${secondRoute.path}`" :index="`/${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `/${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
+                  <i class="el-icon-menu"></i>
+                  <span slot="title">{{ secondRoute.title }}</span>
+                </el-menu-item>
+              </template>
+            </template>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -120,12 +137,12 @@
       }
     },
     created() {
-      let newRoutes = localStorage.getItem('newRoutes');
+      let newRoutes = sessionStorage.getItem('newRoutes');
       /* 初始化菜单 */
       this.newRoutes = JSON.parse(newRoutes);
       console.log(this.newRoutes);
       /* 第一次应该路由加载的是 */
-      this.$router.push('/home/dashBoard');
+//      this.$router.push('/home/dashBoard');
     }
   }
 </script>
