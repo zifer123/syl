@@ -33,17 +33,41 @@
     },
     methods: {
       register() {
+          this.$http.get('/api/users').then(function(data) {
+            console.log(data);
+          });
         let routes = [
           {
-            path: 'wxSet',
+            path: 'WxSet',
             title: '微信设置',
             show: true,
-            icon: 'icon-wxSet',
             children: [
               {
-                path: 'wxMenu',
+                path: 'WxMenu',
                 show: true,
                 title: '微信菜单',
+                children: [
+                  {
+                    path: 'MenuCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'MenuAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'MenuEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'MenuDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               },
               {
                 path: 'wxApiSet',
@@ -54,72 +78,170 @@
           },
 
           {
-            path: 'userManage',
+            path: 'UserManage',
             title: '用户管理',
             show: true,
-            icon: 'icon-userManage',
             children: [
               {
-                path: 'userList',
+                path: 'DriverGroup',
                 show: true,
-                title: '用户列表'
+                title: '司机组',
+                children: [
+                  {
+                    path: 'DriverCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'DriverAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'DriverEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'DriverDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               },
               {
-                path: 'driverGroup',
+                path: 'MerchatGroup',
                 show: true,
-                title: '司机组'
+                title: '商家组',
+                children: [
+                  {
+                    path: 'MerchatCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'MerchatAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'MerchatEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'MerchatDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               },
               {
-                path: 'userVerify',
+                path: 'WorkshopGroup',
+                show: true,
+                title: '维修厂组',
+                children: [
+                  {
+                    path: 'WorkshopCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'WorkshopAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'WorkshopEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'WorkshopDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
+              },
+              {
+                path: 'UserVerify',
                 show: true,
                 title: '用户审核',
-              },
-              {
-                path: 'merchatGroup',
-                show: true,
-                title: '商家组'
-              },
-              {
-                path: 'workshopGroup',
-                show: true,
-                title: '维修厂组'
               }
             ]
           },
 
           {
-            path: 'orderManage',
+            path: 'OrderManage',
             title: '订单管理',
             show: true,
-            icon: 'icon-orderManage',
             children: [
               {
-                path: 'orderList',
+                path: 'OrderManage',
                 show: true,
-                title: '订单查询'
+                title: '订单管理',
+                children: [
+                  {
+                    path: 'OrderCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'OrderAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'OrderEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'OrderDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               },
               {
-                path: 'orderVerify',
+                path: 'OrderVerify',
                 show: true,
                 title: '订单审核'
               },
               {
-                path: 'orderTemp',
+                path: 'OrderTemp',
                 show: true,
-                title: '临时订单'
+                title: '临时订单',
+                children: [
+                  {
+                    path: 'OrderTempCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'OrderTempAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'OrderTempEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'OrderTempDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               },
               {
-                path: 'orderEdit',
-                show: true,
-                title: '订单录入'
-              },
-              {
-                path: 'orderCustomerService',
+                path: 'OrderCustomerService',
                 show: true,
                 title: '客服审单'
               },
               {
-                path: 'settleAccountsModeSet',
+                path: 'SettleAccountsModeSet',
                 show: true,
                 title: '结算模式设置'
               }
@@ -127,47 +249,90 @@
           },
 
           {
-            path: 'areaManage',
+            path: 'AreaManage',
             show: true,
             title: '区域管理',
             icon: 'icon-areaSet',
             children: [
               {
-                path: 'lineList',
+                path: 'LineList',
                 show: true,
-                title: '线路列表'
+                title: '线路列表',
+                children: [
+                  {
+                    path: 'LineCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'LineAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'LineEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'LineDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               },
               {
-                path: 'areaEdit',
+                path: 'AreaEdit',
                 show: true,
-                title: '区域编辑'
+                title: '区域编辑',
+                children: [
+                  {
+                    path: 'AreaCheck',
+                    show: true,
+                    title: '查看'
+                  },
+                  {
+                    path: 'AreaAdd',
+                    show: true,
+                    title: '添加'
+                  },
+                  {
+                    path: 'AreaEdit',
+                    show: true,
+                    title: '编辑'
+                  },
+                  {
+                    path: 'AreaDelete',
+                    show: true,
+                    title: '删除'
+                  }
+                ]
               }
             ]
           },
 
           {
-            path: 'finance',
+            path: 'Finance',
             title: '财务',
             show: true,
-            icon: 'icon-finance',
             children: [
               {
-                path: 'receiptVerify',
+                path: 'ReceiptVerify',
                 show: true,
                 title: '回单审核'
               },
               {
-                path: 'paymentVerify',
+                path: 'PaymentVerify',
                 show: true,
                 title: '交款审核'
               },
               {
-                path: 'billMake',
+                path: 'BillMake',
                 show: true,
                 title: '账单生成'
               },
               {
-                path: 'merchatSettleAccounts',
+                path: 'MerchatSettleAccounts',
                 show: true,
                 title: '商家结算'
               }
@@ -175,28 +340,27 @@
           },
 
           {
-            path: 'adminSet',
+            path: 'AdminSet',
             title: '管理员设置',
             show: true,
-            icon: 'icon-adminSet',
             children: [
               {
-                path: 'adminList',
+                path: 'AdminList',
                 show: true,
                 title: '管理员列表'
               },
               {
-                path: 'authoritySet',
+                path: 'AuthoritySet',
                 show: true,
                 title: '权限设置'
               },
               {
-                path: 'opLog',
+                path: 'OpLog',
                 show: true,
                 title: '操作日志'
               },
               {
-                path: 'fareSet',
+                path: 'FareSet',
                 show: false,
                 title: '费用设置'
               }
@@ -233,22 +397,11 @@
         ];
         /* 过滤路由，把要显示了路由存储（权限管理） */
         for(let i=0;i<routes.length;i++) {
-          if(routes[i].show) {
-            /* 循环子级 */
-            let childrenRoutes = routes[i].children;
-            for(let j=0;j<childrenRoutes.length;j++) {
-              if(!childrenRoutes[j].show) {
-                /* 子级的show为false则直接删除 */
-                childrenRoutes.splice(j,1);
-              }
-            }
-          }else {
-            /* 如果第一级都不显示，则直接删除这个 */
+          if(!routes[i].show) {
             routes.splice(i,1);
           }
         }
-        console.log(routes);
-        localStorage.setItem('routes',JSON.stringify(routes));
+        sessionStorage.setItem('routes',JSON.stringify(routes));
         location.href = 'index.html';
       }
     }

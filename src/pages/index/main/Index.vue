@@ -10,21 +10,38 @@
           unique-opened
           style="height: 100%;"
           active-text-color="#ffd04b">
-          <el-submenu v-for="item in newRoutes" :key="item.path" :index="item.path">
+          <el-submenu v-for="firstRoute in newRoutes" :key="firstRoute.path" :index="firstRoute.path">
             <template slot="title">
-              <i class="iconfont" :class="item.icon"></i>
-              <span>{{ item.title }}</span>
+              <span>{{ firstRoute.title }}</span>
             </template>
-            <el-menu-item v-for="ite in item.children" :key="ite.path" :index="ite.path" @click.native="routeTo({route: `/${item.path}/${ite.path}`,title: ite.title})">
-              <i class="el-icon-menu"></i>
-              <span slot="title">{{ ite.title }}</span>
-            </el-menu-item>
+
+            <!-- 判断是否是group -->
+            <template v-for="secondRoute in firstRoute.children">
+              <template v-if="secondRoute.group">
+                <el-submenu :index="`/${firstRoute.path}/${secondRoute.path}`" :key="`/${firstRoute.path}/${secondRoute.path}`">
+                  <template slot="title">
+                    <i class="el-icon-menu"></i>
+                    <span>{{ secondRoute.title }}</span>
+                  </template>
+                  <!-- 只显示查看和添加，当然，在show为true的情况下 -->
+                  <el-menu-item v-for="thirdRoute in secondRoute.children" v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`/${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`/${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" @click.native="addTab({route: `/${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`,title: `${secondRoute.title}/${thirdRoute.title}`})">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">{{ thirdRoute.title }}</span>
+                  </el-menu-item>
+                </el-submenu>
+              </template>
+              <template v-else>
+                <el-menu-item v-show="!secondRoute.hidden" :key="`/${firstRoute.path}/${secondRoute.path}`" :index="`/${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `/${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
+                  <i class="el-icon-menu"></i>
+                  <span slot="title">{{ secondRoute.title }}</span>
+                </el-menu-item>
+              </template>
+            </template>
           </el-submenu>
         </el-menu>
       </el-aside>
       <el-main>
         <el-tabs class="fixedTab" v-model="rightRoutesActive" type="card" closable @tab-click="clickTab" @tab-remove="removeTab">
-          <el-tab-pane name="/home/dashBoard" label="主页面板"></el-tab-pane>
           <el-tab-pane
             v-for="(item, index) in rightRoutes"
             :key="item.name"
@@ -48,30 +65,86 @@
       }
     },
     methods: {
-      ...mapMutations(['addTab','clickTab','removeTab']),
-      routeTo(routeInfo) {
-        this.$router.push(routeInfo.route);
-        this.addTab(routeInfo);
+      addTab(routeInfo) {
+        // 路由还是组件跳，因为vuex只管状态，切记
+        this.$router.push({
+          path: routeInfo.route
+        });
+        let mark = false;
+        console.log(this.$store.state.rightRoutes);
+        for(let i = 0;i<this.$store.state.rightRoutes.length;i++) {
+          if(this.$store.state.rightRoutes[i].name == routeInfo.route) {
+            mark = true;
+            break;
+          }
+        }
+        /* 判断右边路由标签有没有 */
+        if(mark) {
+          /* 已存在，直接active,这里会触发计算属性rightRoutesActive的setter操作，不必担心 */
+          this.rightRoutesActive = routeInfo.route;
+        }else {
+//          this.rightRoutesArr.push(routeInfo.route);
+          /* 这里会触发计算属性rightRoutesActive的setter操作，不必担心 */
+          this.rightRoutesActive = routeInfo.route;// 第一次设置，为了active
+          this.$store.commit('addTab',routeInfo);
+        }
+      },
+      clickTab(tab) {
+        /*这里会触发计算属性activeNav的setter操作，不必担心*/
+        this.activeNav = tab.name;
+        this.$router.push({
+          path: tab.name
+        });
+      },
+      removeTab(tab) {
+        /* tab（tab的name） */
+        if(tab == '/home/dashBoard') {
+          this.$message({
+            showClose: true,
+            message: '首页不允许关闭',
+            type: 'warning'
+          });
+        }else {
+          this.$store.commit('removeTab',tab);
+          /* 判断关闭的是否是active */
+          if(this.rightRoutesActive == tab) {
+            /* 如果关闭的是处于active的，则让arr最后一个变成active */
+            this.rightRoutesActive = this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name;
+            this.$router.push(this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name);
+          }
+        }
+>>>>>>> 5997da17c7c7cde9fe48899db281c6a1f534b96b
       }
     },
-    created() {
-      let newRoutes = localStorage.getItem('newRoutes');
-      /* 初始化菜单 */
-      this.newRoutes = JSON.parse(newRoutes);
-      /* 第一次应该路由加载的是 */
-      this.$router.push('/home/dashBoard');
-    },
     computed: {
-      ...mapState(['num','rightRoutes','rightRoutesArr','activeNav']),
+      /* 获取vuex的状态,给要时时可变的状态定义setter,要在vuex中定义mutaions改变状态，符合vuex逻辑 */
+      activeNav: {
+        get() {
+          return this.$store.state.activeNav;
+        },
+        set(newVal) {
+          this.$store.commit('changeActiveNav',newVal);
+        }
+      },
       rightRoutesActive: {
         get() {
           return this.$store.state.rightRoutesActive;
         },
-        set(newValue) {
-          this.activeRouter = newValue;
-          this.$store.commit('changeRightRoutesActive',newValue)
+        set(newVal) {
+          this.$store.commit('changeRightRoutesActive',newVal);
         }
+      },
+      rightRoutes() {
+        return this.$store.state.rightRoutes;
       }
+    },
+    created() {
+      let newRoutes = sessionStorage.getItem('newRoutes');
+      /* 初始化菜单 */
+      this.newRoutes = JSON.parse(newRoutes);
+      console.log(this.newRoutes);
+      /* 第一次应该路由加载的是 */
+//      this.$router.push('/home/dashBoard');
     }
   }
 </script>

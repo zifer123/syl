@@ -4,6 +4,8 @@
 import  Vue from 'vue'
 import { Input,Button } from 'element-ui'
 import Login from './Login.vue'
+import axios from 'axios'
+Vue.prototype.$http = axios
 Vue.use(Input)
 Vue.use(Button)
 new Vue({
