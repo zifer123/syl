@@ -150,6 +150,7 @@ Vue.prototype.$echarts = echarts
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
+import store from './store'
 
 import './assets/css/reset.css'
 import './assets/iconfont/iconfont.css'
@@ -225,6 +226,7 @@ if(localStorage.getItem('routes')) {
   new Vue({
     el: '#app',
     router,
+    store,
     template: '<App/>',
     components: { App }
   });
