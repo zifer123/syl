@@ -168,11 +168,12 @@ Vue.config.productionTip = false
 if(sessionStorage.getItem('routes')) {
   let routes = JSON.parse(sessionStorage.getItem('routes'));
   for(let i = 0;i<routes.length;i++) {
-    routes[i].component = (resolve) => require(['./CommonView.vue'],resolve);
+    routes[i].path = '/'+routes[i].path;
+    routes[i].component = () => import('./CommonView.vue');
     for(let j = 0;j<routes[i].children.length;j++) {
       /* 先判断是否为true，再往下走 */
       if(routes[i].children[j].show) {
-        routes[i].children[j].component = (resolve) => require(['./CommonView.vue'],resolve);
+        routes[i].children[j].component = () => import('./CommonView.vue');
         /* 判断是否还有children */
         if(routes[i].children[j].children&&routes[i].children[j].children.length) {
           /* 如果还有在循环，顺便加上group */
@@ -182,26 +183,26 @@ if(sessionStorage.getItem('routes')) {
               let first = routes[i].path;
               let second = routes[i].children[j].path;
               let third = routes[i].children[j].children[k].path;
-              routes[i].children[j].children[k].component = resolve => require([`./children/${first}/${second}/${third}`],resolve);
+              routes[i].children[j].children[k].component = () => import(`./children${first}/${second}/${third}`);
             }
           }
         }else {
-          routes[i].children[j].component = (resolve) => require([`./children/${routes[i].path}/${routes[i].children[j].path}`],resolve);
+          routes[i].children[j].component = () => import(`./children${routes[i].path}/${routes[i].children[i].path}`);
         }
       }
     }
   }
 
+  console.log(routes);
   let newRoutes = [
     {
       path: '/',
-      component: resolve => require(['./main/Index.vue'],resolve),
-      children: routes
-    }
+      component: resolve => require(['./children/Home/DashBoard.vue'],resolve)
+    },
+    ...routes
   ];
 
-  console.log(newRoutes);
-  sessionStorage.setItem('newRoutes',JSON.stringify(routes));
+  sessionStorage.setItem('newRoutes',JSON.stringify(newRoutes));
   let router = new Router({
     routes: newRoutes
   });
