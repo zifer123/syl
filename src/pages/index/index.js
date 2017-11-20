@@ -187,7 +187,7 @@ if(sessionStorage.getItem('routes')) {
             }
           }
         }else {
-          routes[i].children[j].component = () => import(`./children${routes[i].path}/${routes[i].children[i].path}`);
+          routes[i].children[j].component = () => import(`./children${routes[i].path}/${routes[i].children[j].path}`);
         }
       }
     }

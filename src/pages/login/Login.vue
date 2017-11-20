@@ -382,15 +382,14 @@
           },
 
           {
-            path: 'editor',
-            title: '富文本',
+            path: 'Test',
+            title: '测试',
             show: true,
-            icon: 'icon-adminSet',
             children: [
               {
-                path: 'markDown',
+                path: 'Test',
                 show: true,
-                title: 'markDown编辑器'
+                title: '测试上传'
               }
             ]
           }
