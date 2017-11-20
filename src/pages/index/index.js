@@ -187,7 +187,7 @@ if(sessionStorage.getItem('routes')) {
             }
           }
         }else {
-          routes[i].children[j].component = () => import(`./children${routes[i].path}/${routes[i].children[i].path}`);
+          routes[i].children[j].component = () => import(`./children${routes[i].path}/${routes[i].children[j].path}`);
         }
       }
     }
@@ -197,11 +197,13 @@ if(sessionStorage.getItem('routes')) {
   let newRoutes = [
     {
       path: '/',
+      title: '首页',
       component: resolve => require(['./children/Home/DashBoard.vue'],resolve)
     },
     ...routes
   ];
 
+  /* App.vue需要 */
   sessionStorage.setItem('newRoutes',JSON.stringify(newRoutes));
   let router = new Router({
     routes: newRoutes

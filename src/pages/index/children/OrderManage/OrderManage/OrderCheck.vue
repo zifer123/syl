@@ -1,10 +1,13 @@
 <template>
-  <el-container>
+  <div>
     <h4 class="page-header">
-      <el-button @click="showHeader" type="primary" plain>筛选条件<i class="el-icon-zoom-in el-icon--right"></i></el-button>
+      <el-button @click="showHeader" type="primary" plain>查询<i class="el-icon-zoom-in el-icon--right"></i></el-button>
     </h4>
 
-    <el-header height="" v-show="headerShow">
+    <el-dialog
+      title="提示"
+      :visible.sync="headerShow"
+      width="80%">
       <el-row :gutter="20">
         <el-col :xs="12" :sm="12" :md="12" :lg="6" :xl="6">
           <div class="flexBox">
@@ -180,200 +183,202 @@
           </div>
         </el-col>
       </el-row>
-      <el-button @click="orderSearch">搜索</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="orderSearch">搜索</el-button>
+      </span>
+    </el-dialog>
 
-    </el-header>
-    <el-main>
-      <el-table
-        :data="orderInfo"
-        v-loading="tableLoading"
-        height="450"
-        style="width: 100%;">
+    <el-input v-model="filterMW" placeholder="筛选汽配商/维修厂"></el-input>
+    <el-table
+      :data="newOrderInfo"
+      v-loading="tableLoading"
+      height="450"
+      style="width: 100%;">
+      <el-table-column
+        fixed
+        type="index">
+      </el-table-column>
+      <el-table-column
+        prop="date"
+        sortable
+        label="日期"
+        width="150">
+      </el-table-column>
+      <el-table-column
+        prop="sn"
+        label="单号"
+        width="150">
+      </el-table-column>
+      <el-table-column
+        prop="merchat"
+        label="汽配商"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="workshop"
+        label="维修厂"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="allPrice"
+        label="货款金额"
+        width="300">
+      </el-table-column>
+      <el-table-column label="支付方式">
         <el-table-column
-          fixed
-          type="index">
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          sortable
-          label="日期"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="sn"
-          label="单号"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="merchat"
-          label="汽配商"
+          prop="cash"
+          label="现金"
           width="120">
         </el-table-column>
         <el-table-column
-          prop="workshop"
+          prop="guazhang"
+          label="挂账"
+          width="120">
+        </el-table-column>
+      </el-table-column>
+      <el-table-column
+        prop="yunfei"
+        label="运费"
+        width="120">
+      </el-table-column>
+      <el-table-column label="运费支付方式">
+        <el-table-column
+          prop="xianfu"
+          label="现付"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="dapfu"
+          label="到付"
+          width="120">
+        </el-table-column>
+        <el-table-column
+          prop="yuejie"
+          label="月结"
+          width="120">
+        </el-table-column>
+      </el-table-column>
+      <el-table-column
+        prop="tuihuojine"
+        label="退货金额"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="order_status"
+        label="订单状态"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="peisong_status"
+        label="配送状态"
+        width="120">
+      </el-table-column>
+
+      <el-table-column label="联系方式">
+        <el-table-column
+          prop="xianfu"
           label="维修厂"
           width="120">
         </el-table-column>
         <el-table-column
-          prop="allPrice"
-          label="货款金额"
-          width="300">
-        </el-table-column>
-        <el-table-column label="支付方式">
-          <el-table-column
-            prop="cash"
-            label="现金"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="guazhang"
-            label="挂账"
-            width="120">
-          </el-table-column>
-        </el-table-column>
-        <el-table-column
-          prop="yunfei"
-          label="运费"
-          width="120">
-        </el-table-column>
-        <el-table-column label="运费支付方式">
-          <el-table-column
-            prop="xianfu"
-            label="现付"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="dapfu"
-            label="到付"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="yuejie"
-            label="月结"
-            width="120">
-          </el-table-column>
-        </el-table-column>
-        <el-table-column
-          prop="tuihuojine"
-          label="退货金额"
+          prop="dapfu"
+          label="汽配商"
           width="120">
         </el-table-column>
         <el-table-column
-          prop="order_status"
-          label="订单状态"
+          prop="yuejie"
+          label="月结"
+          width="120">
+        </el-table-column>
+      </el-table-column>
+
+      <el-table-column label="扫描时间">
+        <el-table-column
+          prop="xianfu"
+          label="第一次扫描"
           width="120">
         </el-table-column>
         <el-table-column
-          prop="peisong_status"
-          label="配送状态"
+          prop="dapfu"
+          label="第二次扫描"
           width="120">
         </el-table-column>
-
-        <el-table-column label="联系方式">
-          <el-table-column
-            prop="xianfu"
-            label="维修厂"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="dapfu"
-            label="汽配商"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="yuejie"
-            label="月结"
-            width="120">
-          </el-table-column>
-        </el-table-column>
-
-        <el-table-column label="扫描时间">
-          <el-table-column
-            prop="xianfu"
-            label="第一次扫描"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="dapfu"
-            label="第二次扫描"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="yuejie"
-            label="第三次扫描"
-            width="120">
-          </el-table-column>
-          <el-table-column
-            prop="yuejie"
-            label="第四次扫描"
-            width="120">
-          </el-table-column>
-        </el-table-column>
-
         <el-table-column
-          prop="detination"
-          width="150"
-          label="目的地">
+          prop="yuejie"
+          label="第三次扫描"
+          width="120">
         </el-table-column>
-
         <el-table-column
-          prop="detination"
-          width="150"
-          label="配送地址">
+          prop="yuejie"
+          label="第四次扫描"
+          width="120">
         </el-table-column>
+      </el-table-column>
 
-        <el-table-column
-          prop="detination"
-          width="150"
-          label="录单员结算">
-        </el-table-column>
+      <el-table-column
+        prop="detination"
+        width="150"
+        label="目的地">
+      </el-table-column>
 
-        <el-table-column
-          prop="detination"
-          width="150"
-          label="配送员结算">
-        </el-table-column>
+      <el-table-column
+        prop="detination"
+        width="150"
+        label="配送地址">
+      </el-table-column>
 
-        <el-table-column
-          prop="detination"
-          width="150"
-          label="账单生成">
-        </el-table-column>
+      <el-table-column
+        prop="detination"
+        width="150"
+        label="录单员结算">
+      </el-table-column>
 
-        <el-table-column
-          prop="detination"
-          width="150"
-          label="汽配商结算">
-        </el-table-column>
+      <el-table-column
+        prop="detination"
+        width="150"
+        label="配送员结算">
+      </el-table-column>
 
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="220">
-          <template slot-scope="scope">
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, scope.row)"
-              type="primary"
-              size="small">
-              编辑
-            </el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData4)"
-              type="info"
-              size="small">
-              打印
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-main>
-  </el-container>
+      <el-table-column
+        prop="detination"
+        width="150"
+        label="账单生成">
+      </el-table-column>
+
+      <el-table-column
+        prop="detination"
+        width="150"
+        label="汽配商结算">
+      </el-table-column>
+
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="220">
+        <template slot-scope="scope">
+          <el-button
+            @click.native.prevent="deleteRow(scope.$index, scope.row)"
+            type="primary"
+            size="small">
+            编辑
+          </el-button>
+          <el-button
+            @click.native.prevent="deleteRow(scope.$index, tableData4)"
+            type="info"
+            size="small">
+            打印
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
 </template>
 
 <script>
   export default {
     data() {
       return {
+        filterMW: '',
         postData: {
           freightType: '',
         },// 发送的数据
@@ -615,8 +620,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '请问我企鹅',
+            workshop: '而特瑞特',
             allPrice: 250,
             cash: '',
             guazhang: 85,
@@ -625,8 +630,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '是电饭锅电饭锅',
+            workshop: '太容易投入',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -634,8 +639,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '阿加西邪恶',
+            workshop: '他是个很反感',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -643,8 +648,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '故环境规划',
+            workshop: '我二哥好吧',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -652,8 +657,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '撒的而为',
+            workshop: '热退热的',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -661,8 +666,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '他用他的粉丝',
+            workshop: '遇到广泛的',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -670,8 +675,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '突然又太容易',
+            workshop: '而额外人',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -679,8 +684,8 @@
           {
             date: '2001-11-02 17:03:57',
             sn: 17110217035968,
-            merchat: '新锐汽配',
-            workshop: '大兴哈哈',
+            merchat: '法国和法规和',
+            workshop: '阿斯顿撒点',
             allPrice: 250,
             cash: '',
             guazhang: 85
@@ -717,6 +722,7 @@
       },
       /* 订单查询 */
       orderSearch() {
+        this.headerShow = false;
         this.tableLoading = true;
         setTimeout(function() {
           this.tableLoading = false;
@@ -900,6 +906,14 @@
         ];
       },
     },
+    computed: {
+      newOrderInfo() {
+        let _this = this;
+        return this.orderInfo.filter(function(item) {
+          return item.merchat.toLowerCase().indexOf(_this.filterMW.toLowerCase())!=-1||item.workshop.toLowerCase().indexOf(_this.filterMW.toLowerCase())!=-1;
+        });
+      }
+    },
     created() {
       this.getResults();
       this.merchatInfo = this.loadMerchatInfo();
@@ -909,7 +923,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .flexBox {
     line-height: 35px;
     display: flex;

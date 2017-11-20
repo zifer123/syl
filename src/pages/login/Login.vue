@@ -379,20 +379,6 @@
                 title: '柱状图'
               }
             ]
-          },
-
-          {
-            path: 'editor',
-            title: '富文本',
-            show: true,
-            icon: 'icon-adminSet',
-            children: [
-              {
-                path: 'markDown',
-                show: true,
-                title: 'markDown编辑器'
-              }
-            ]
           }
         ];
         /* 过滤路由，把要显示了路由存储（权限管理） */
