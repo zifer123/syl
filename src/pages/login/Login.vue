@@ -70,7 +70,7 @@
                 ]
               },
               {
-                path: 'wxApiSet',
+                path: 'WxApiSet',
                 show: true,
                 title: '微信API设置'
               }
@@ -368,14 +368,14 @@
           },
 
           {
-            path: 'echart',
+            path: 'Echart',
             title: 'echart',
             show: false,
             icon: 'icon-adminSet',
             children: [
               {
-                path: 'bar',
-                show: false,
+                path: 'Bar',
+                show: true,
                 title: '柱状图'
               }
             ]

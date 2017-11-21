@@ -3,10 +3,24 @@
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
+import { Loading } from 'element-ui';
 Vue.use(Vuex)
 
+let loadingInstance = Loading.service({
+  lock: true,
+  spinner: 'el-icon-loading',
+  text: '初次加载，请耐心等待！'
+});
+/* 在vuex存储不会变的东西，可以减少http请求 */
+let addressInfo = [];
+axios.get('/api/addressInfo').then(function(body) {
+  loadingInstance.close();
+  addressInfo.push(...body.data);
+});
 const state = {
   activeNav: '/',
+  addressInfo,// 省市区街道
   rightRoutes: [
     {
       title: '首页',
