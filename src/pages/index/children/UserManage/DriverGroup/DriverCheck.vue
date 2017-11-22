@@ -37,8 +37,8 @@
 
         <el-col :xs="12" :sm="12" :md="12" :lg="6" :xl="6">
           <div class="flexBox">
-            <label>账户名:</label>
-            <el-input class="item" v-model="postData.accountName" placeholder="账户名"></el-input>
+            <label>姓名:</label>
+            <el-input class="item" v-model="postData.userName" placeholder="姓名"></el-input>
           </div>
         </el-col>
 
@@ -52,13 +52,13 @@
         <el-col :xs="12" :sm="12" :md="12" :lg="6" :xl="6">
           <div class="flexBox">
             <label>联系方式:</label>
-            <el-input class="item" v-model="postData.phone" placeholder="手机、电话"></el-input>
+            <el-input class="item" v-model="postData.contact" placeholder="手机、电话"></el-input>
           </div>
         </el-col>
       </el-row>
 
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="driverSearch">确 定</el-button>
+        <el-button type="primary" @click="search">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -72,11 +72,6 @@
       <el-table-column
         fixed="left"
         type="index">
-      </el-table-column>
-      <el-table-column
-        prop="accountName"
-        label="账户名"
-        width="150">
       </el-table-column>
       <el-table-column
         prop="userName"
@@ -160,7 +155,10 @@
         driverInfo: [],
         postData: {
           startTime: `${year}-${month}-${date} 00:00:00`,
-          endTime: `${year}-${month}-${date} 23:59:59`
+          endTime: `${year}-${month}-${date} 23:59:59`,
+          userName: '',
+          companyShortName: '',
+          contact: ''
         },
         keyWord: '',
         page: {
@@ -177,17 +175,18 @@
         this.headerShow = true;
       },
       /* 搜索 */
-      driverSearch() {
+      search() {
         this.headerShow = false;
         console.log(this.postData);
         this.tableLoading = true;
+        this.fetchInfo();
         setTimeout(function() {
           this.tableLoading = false;
           this.driverInfo = [];
         }.bind(this),2000);
       },
       /* 获取信息 */
-      fetchDriverInfo(currentPage=1,size=20) {
+      fetchInfo(currentPage=1,size=20) {
         let _this = this;
         _this.driverInfo = [
           {
@@ -492,7 +491,12 @@
       },
       /* 编辑信息 */
       editDeiver(row) {
-        console.log(row.id)
+        this.$router.push({
+          path: '/UserManage/DriverGroup/DriverEdit',
+          query: {
+            id: row.id
+          }
+        })
       },
       /* 删除信息 */
       deleteDeiver(row) {
@@ -504,11 +508,11 @@
         /* 因为element没有提供currentChange能拿到size的api，所以只能通过这样获取 */
         this.page.size = size;
         let currentPage = this.page.currentPage;
-        this.fetchDriverInfo(currentPage,size);
+        this.fetchInfo(currentPage,size);
       },
       handleCurrentChange(currentPage) {
         let size = this.page.size;
-        this.fetchDriverInfo(currentPage,size);
+        this.fetchInfo(currentPage,size);
       }
     },
     computed: {
@@ -521,7 +525,7 @@
     created() {
       let currentPage = this.page.currentPage;
       let size = this.page.size;
-      this.fetchDriverInfo(currentPage,size);
+      this.fetchInfo(currentPage,size);
     }
   }
 </script>

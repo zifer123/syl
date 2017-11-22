@@ -1,99 +1,156 @@
 <template>
   <div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-      <el-form-item label="订单编号">
-        <el-input v-model="ruleForm.sn"></el-input>
-      </el-form-item>
-      <el-form-item label="汽配商" prop="merchat">
-        <el-autocomplete v-model="ruleForm.merchat"
-          :fetch-suggestions="filterMerchat"
-          placeholder="选择汽配商"
-          style="width: 100%;"
-          @select="merchatSelect">
-          <template slot-scope="props">
-            <div>{{ props.item.name }}</div>
-          </template>
-        </el-autocomplete>
-        <div v-show="state.merchatMessage">
-          <el-tag v-text="merchatMessage.phone"></el-tag>
-          <el-tag v-text="merchatMessage.address">广东省汕尾市陆河县岁宝百货12号街旁边</el-tag>
-          <el-tag v-text="merchatMessage.fare">￥15</el-tag>
-        </div>
+    <el-form :model="ruleForm" style="width: 50%;" :rules="rules" ref="ruleForm" label-width="100px">
+      <el-form-item label="微信用户名" prop="wxName">
+        <el-input disabled="" v-model="ruleForm.wxName"></el-input>
       </el-form-item>
 
-      <el-form-item label="维修厂" prop="workshop">
-        <el-autocomplete v-model="ruleForm.workshop"
-                         :fetch-suggestions="filterWorkshop"
-                         placeholder="选择维修厂"
-                         style="width: 100%;"
-                         @select="workshopSelect">
-          <template slot-scope="props">
-            <div>{{ props.item.name }}</div>
-          </template>
-        </el-autocomplete>
-        <div v-show="state.workshopMessage">
-          <el-tag v-text="workshopMessage.phone"></el-tag>
-          <el-tag v-text="workshopMessage.address">广东省汕尾市陆河县岁宝百货12号街旁边</el-tag>
-          <el-tag v-text="workshopMessage.fare">￥15</el-tag>
-        </div>
+      <el-form-item label="真实姓名" prop="userName">
+        <el-input v-model="ruleForm.userName"></el-input>
       </el-form-item>
 
-      <el-form-item label="货物" required>
-        <el-col :span="5">
-          <el-form-item prop="totalPrice" :rules="[
-              { required: true, message: '请输入'},
-              { type: 'number', message: '请输入正确的数值'}
-            ]"
-          >
-            <el-input  placeholder="总金额" v-model.number="ruleForm.totalPrice"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="2" style="text-align: center;">-</el-col>
-        <el-col :span="5">
-          <el-form-item prop="productNum" :rules="[
-              { required: true, message: '请输入'},
-              { type: 'number', message: '请输入正确的数值'}
-            ]">
-            <el-input placeholder="数量" v-model.number="ruleForm.productNum"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="11" :offset="1">
-          <el-radio v-model="ruleForm.paymentMode" label="cash">现金</el-radio>
-          <el-radio v-model="ruleForm.paymentMode" label="onAccount">挂账</el-radio>
-        </el-col>
+      <el-form-item label="联系方式" prop="contact">
+        <el-input v-model="ruleForm.contact"></el-input>
       </el-form-item>
 
-      <el-form-item label="特殊选项" prop="options">
-        <el-checkbox-group v-model="ruleForm.options">
-          <el-checkbox v-for="option in options" :label="option.id" :key="option.id">{{option.name}}</el-checkbox>
+      <el-form-item label="区域" prop="addressInfo">
+        <el-cascader
+          :options="addressInfo"
+          filterable
+          style="width: 100%"
+          :props="props"
+          v-model="ruleForm.addressInfo"
+        ></el-cascader>
+      </el-form-item>
+
+      <el-form-item label="详细地址" prop="doorCode">
+        <el-input v-model="ruleForm.doorCode"></el-input>
+      </el-form-item>
+
+      <el-form-item label="类型选择" prop="level">
+        <el-select v-model="ruleForm.level" placeholder="请选择">
+          <el-option label="直线" :value="3"></el-option>
+          <el-option label="干线" :value="1"></el-option>
+          <el-option label="支线" :value="2"></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="线路选择" prop="level">
+        <el-checkbox-group v-model="ruleForm.lines">
+          <el-checkbox v-for="line in lines" :label="line.value" :key="line.value">{{ line.label }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
 
-      <el-form-item label="运费明细" prop="freight">
-        <el-tag>总价: {{ allPrice }}元</el-tag>
-        <el-tag>手续费: <span v-text="state.handFare"></span>元</el-tag>
-        <el-tag>偏远地区: <span v-text="state.remoteAreaFare"></span>元</el-tag>
-        <el-tag>汽配商: <span v-text="state.merchatFare"></span>元</el-tag>
-        <el-tag>维修厂: <span v-text="state.workshopFare"></span>元</el-tag>
-        <el-tag>特殊: <span v-text="state.optionsFare"></span>元</el-tag>
-      </el-form-item>
-
-      <el-form-item label="结算方式" prop="freightPaymentMode">
-        <el-radio v-model="ruleForm.freightPaymentMode" label="1">月结</el-radio>
-        <el-radio v-model="ruleForm.freightPaymentMode" label="2">现付</el-radio>
-        <el-radio v-model="ruleForm.freightPaymentMode" label="2">到付</el-radio>
-      </el-form-item>
-
-      <el-form-item label="仓库选择" prop="desc">
-        <el-radio v-model="ruleForm.warehouse" label="1">淡水仓</el-radio>
-        <el-radio v-model="ruleForm.warehouse" label="2">奥特仓</el-radio>
-        <el-radio v-model="ruleForm.warehouse" label="2">远古仓</el-radio>
-      </el-form-item>
-
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">提交并打印</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
+
+<script>
+  export default {
+    data() {
+      return {
+        num: this.$store.state.num,
+        props: {
+          value: 'name',
+          label: 'name',
+          children: 'childs'
+        },// 存储级联动prop的信息
+        addressInfo: this.$store.state.addressInfo, //存储地址信息
+        lines: [],//线路
+        ruleForm: {
+          addressInfo: [],//['广东省','深圳市','罗湖区','桂园街道']
+          level: 3,
+          lines: [23,24]
+        }, //存储发送的信息（初始化的信息）
+        rules: {
+          companyName: [
+            { required: true, message: '请输入名称' }
+          ],
+          companyShortName: [
+            { required: true, message: '请输入简称' }
+          ],
+          addressInfo: [
+            { required: true, message: '请选择地址信息' }
+          ],
+          doorCode: [
+            { required: true, message: '请填写详细地址信息' }
+          ],
+          addFare: [
+            { required: true, message: '请输入费用' },
+            { type: 'number', message: '请输入数字' }
+          ]
+        }
+      }
+    },
+    methods: {
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
+    },
+    activated() {
+      console.log(55);
+      this.lines = [
+        {
+          value: 23,
+          label: '观澜线'
+        },
+        {
+          value: 24,
+          label: '凤岗线'
+        },
+        {
+          value: 25,
+          label: '淡水线'
+        },
+        {
+          value: 26,
+          label: '坪山线'
+        },
+        {
+          value: 27,
+          label: '龙岗线'
+        },
+        {
+          value: 28,
+          label: '布吉线'
+        },
+        {
+          value: 29,
+          label: '南山线'
+        },
+      ];
+      console.log(66)
+    }
+  }
+</script>
+
+<style scoped>
+  .flexBox {
+    display: flex;
+    /*margin: 5px 0;*/
+  }
+  .flexBox .flexItem {
+    flex: 1;
+    margin-right: 5px;
+  }
+  .el-form-item .el-form-item {
+    margin-bottom: 10px;
+  }
+</style>
