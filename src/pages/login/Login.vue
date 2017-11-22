@@ -379,19 +379,6 @@
                 title: '柱状图'
               }
             ]
-          },
-
-          {
-            path: 'Test',
-            title: '测试',
-            show: true,
-            children: [
-              {
-                path: 'Test',
-                show: true,
-                title: '测试上传'
-              }
-            ]
           }
         ];
         /* 过滤路由，把要显示了路由存储（权限管理） */

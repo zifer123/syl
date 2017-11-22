@@ -6,14 +6,14 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-  activeNav: '/home/dashboard',
+  activeNav: '/',
   rightRoutes: [
     {
-      title: '主页面板',
-      name: '/home/dashBoard'
+      title: '首页',
+      name: '/'
     }
   ],// 保存路由和title
-  rightRoutesActive: '/home/dashBoard'
+  rightRoutesActive: '/'
 };
 
 const mutations = {

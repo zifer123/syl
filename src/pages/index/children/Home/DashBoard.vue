@@ -2,20 +2,39 @@
   <div>
     首页面板
     <el-input placeholder="1111"></el-input>
-    <el-button @click="addNum">测试</el-button>
-    <el-button @click="routeTo({route: '/wxSet/wxApiSet',title: '设置'})"></el-button>
+    <el-button @click="test()">测试</el-button>
+    <el-button @click="addTab({route: '/wxSet/wxApiSet',title: '设置'})"></el-button>
   </div>
 </template>
 
 <script>
   export default {
     methods: {
-      addNum() {
-        this.$store.commit('changeNum');
+      test(a=1) {
+        console.log(a);
       },
-      routeTo(routeInfo) {
-        this.$router.push(routeInfo.route);
-        this.$store.commit('addTab',routeInfo)
+      addTab(routeInfo) {
+        this.$router.push({
+          path: routeInfo.route
+        });
+        let mark = false;
+        console.log(this.$store.state.rightRoutes);
+        for(let i = 0;i<this.$store.state.rightRoutes.length;i++) {
+          if(this.$store.state.rightRoutes[i].name == routeInfo.route) {
+            mark = true;
+            break;
+          }
+        }
+        /* 判断右边路由标签有没有 */
+        if(mark) {
+          /* 已存在，直接active,这里会触发计算属性rightRoutesActive的setter操作，不必担心 */
+          this.$store.commit('changeRightRoutesActive',routeInfo.route);
+        }else {
+//          this.rightRoutesArr.push(routeInfo.route);
+          /* 这里会触发计算属性rightRoutesActive的setter操作，不必担心 */
+          this.$store.commit('changeRightRoutesActive',routeInfo.route);// 第一次设置，为了active
+          this.$store.commit('addTab',routeInfo);
+        }
       }
     }
   }

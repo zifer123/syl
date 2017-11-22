@@ -10,34 +10,41 @@
           unique-opened
           style="height: 100%;"
           active-text-color="#ffd04b">
-          <el-submenu v-for="firstRoute in newRoutes" :key="firstRoute.path" :index="firstRoute.path">
-            <template slot="title">
-              <span>{{ firstRoute.title }}</span>
-            </template>
+          <template v-for="firstRoute in newRoutes" v-if="!firstRoute.children">
+            <el-menu-item :key="`${firstRoute.path}`" :index="`${firstRoute.path}`" @click.native="addTab({route: `${firstRoute.path}`,title: firstRoute.title})">
+              <span slot="title">{{ firstRoute.title }}</span>
+            </el-menu-item>
+          </template>
+          <template v-else>
+            <el-submenu :key="firstRoute.path" :index="firstRoute.path">
+              <template slot="title">
+                <span>{{ firstRoute.title }}</span>
+              </template>
 
-            <!-- 判断是否是group -->
-            <template v-for="secondRoute in firstRoute.children">
-              <template v-if="secondRoute.group">
-                <el-submenu :index="`${firstRoute.path}/${secondRoute.path}`" :key="`${firstRoute.path}/${secondRoute.path}`">
-                  <template slot="title">
+              <!-- 判断是否是group -->
+              <template v-for="secondRoute in firstRoute.children">
+                <template v-if="secondRoute.group">
+                  <el-submenu :index="`${firstRoute.path}/${secondRoute.path}`" :key="`${firstRoute.path}/${secondRoute.path}`">
+                    <template slot="title">
+                      <i class="el-icon-menu"></i>
+                      <span>{{ secondRoute.title }}</span>
+                    </template>
+                    <!-- 只显示查看和添加，当然，在show为true的情况下 -->
+                    <el-menu-item v-for="thirdRoute in secondRoute.children" v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" @click.native="addTab({route: `${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`,title: `${secondRoute.title}/${thirdRoute.title}`})">
+                      <i class="el-icon-menu"></i>
+                      <span slot="title">{{ thirdRoute.title }}</span>
+                    </el-menu-item>
+                  </el-submenu>
+                </template>
+                <template v-else>
+                  <el-menu-item v-show="!secondRoute.hidden" :key="`${firstRoute.path}/${secondRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
                     <i class="el-icon-menu"></i>
-                    <span>{{ secondRoute.title }}</span>
-                  </template>
-                  <!-- 只显示查看和添加，当然，在show为true的情况下 -->
-                  <el-menu-item v-for="thirdRoute in secondRoute.children" v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" @click.native="addTab({route: `${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`,title: `${secondRoute.title}/${thirdRoute.title}`})">
-                    <i class="el-icon-menu"></i>
-                    <span slot="title">{{ thirdRoute.title }}</span>
+                    <span slot="title">{{ secondRoute.title }}</span>
                   </el-menu-item>
-                </el-submenu>
+                </template>
               </template>
-              <template v-else>
-                <el-menu-item v-show="!secondRoute.hidden" :key="`${firstRoute.path}/${secondRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">{{ secondRoute.title }}</span>
-                </el-menu-item>
-              </template>
-            </template>
-          </el-submenu>
+            </el-submenu>
+          </template>
         </el-menu>
       </el-aside>
       <el-main>
@@ -50,7 +57,9 @@
           >
           </el-tab-pane>
         </el-tabs>
-        <router-view style="margin-top: 41px;"></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </el-main>
     </el-container>
   </el-container>
@@ -98,7 +107,7 @@
       },
       removeTab(tab) {
         /* tab（tab的name） */
-        if(tab == '/home/dashBoard') {
+        if(tab == '/') {
           this.$message({
             showClose: true,
             message: '首页不允许关闭',
@@ -149,10 +158,14 @@
 </script>
 
 <style>
+  .el-main {
+    background: #f5f5f5;
+    padding: 0;
+    position: relative;
+  }
   .fixedTab {
-    position: fixed;
-    width: 100%;
-    z-index: 10;
+    position: sticky;
+    top: 0;
   }
   .el-tabs__header {
     background: #f5f5f5;
@@ -165,9 +178,6 @@
   }
   .el-container {
     height: 100%;
-  }
-  .el-main {
-    padding: 0;
   }
   .iconfont {
     color: #f5f5f5 !important;
