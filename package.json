@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
+    "mock": "json-server addressInfo.json -p 3004",
     "start": "node build/dev-server.js",
     "build": "node build/build.js"
   },

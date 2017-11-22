@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>头部,{{ rightRoutesActive }}</el-header>
+    <el-header>头部,{{ rightRoutesActive }}  {{ this.$store.state.num }}</el-header>
     <el-container>
       <el-aside width="201px">
         <el-menu
