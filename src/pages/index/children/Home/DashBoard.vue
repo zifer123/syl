@@ -2,7 +2,6 @@
   <div>
     首页面板
     <el-input placeholder="1111"></el-input>
-    <el-button @click="addNum">测试</el-button>
     <el-button @click="addTab({route: '/WxSet/WxApiSet',title: '微信API设置'})"></el-button>
   </div>
 </template>

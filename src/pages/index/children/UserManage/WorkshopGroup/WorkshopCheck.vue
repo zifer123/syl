@@ -64,7 +64,7 @@
 
     <el-input v-model="keyWord" placeholder="输入可筛选姓名"></el-input>
     <el-table
-      :data="newDriverInfo"
+      :data="newdatas"
       border
       v-loading="tableLoading"
       height="450"
@@ -157,7 +157,7 @@
       return {
         headerShow: false,
         tableLoading: false,
-        driverInfo: [],
+        datas: [],
         postData: {
           startTime: `${year}-${month}-${date} 00:00:00`,
           endTime: `${year}-${month}-${date} 23:59:59`,
@@ -187,13 +187,13 @@
         this.fetchInfo();
         setTimeout(function() {
           this.tableLoading = false;
-          this.driverInfo = [];
+          this.datas = [];
         }.bind(this),2000);
       },
       /* 获取信息 */
       fetchInfo(currentPage=1,size=20) {
         let _this = this;
-        _this.driverInfo = [
+        _this.datas = [
           {
             "id": 1,
             "accountName": "一笑而过",
@@ -491,7 +491,7 @@
             size
           }
         }).then(function(body) {
-          _this.driverInfo = body.data.results;
+          _this.datas = body.data.results;
         });
       },
       /* 编辑信息 */
@@ -521,8 +521,8 @@
       }
     },
     computed: {
-      newDriverInfo() {
-        return this.driverInfo.filter((item) => {
+      newdatas() {
+        return this.datas.filter((item) => {
           return item.userName.toLowerCase().indexOf(this.keyWord.toLowerCase())!=-1;
         })
       }
