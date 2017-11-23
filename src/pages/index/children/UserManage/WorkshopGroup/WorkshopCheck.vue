@@ -64,7 +64,7 @@
 
     <el-input v-model="keyWord" placeholder="输入可筛选姓名"></el-input>
     <el-table
-      :data="newDriverInfo"
+      :data="newdatas"
       border
       v-loading="tableLoading"
       height="450"
@@ -130,18 +130,16 @@
         label="操作"
         width="150">
         <template slot-scope="scope">
-          <el-button @click="editDeiver(scope.row)" type="primary" size="small">编辑</el-button>
-          <el-button @click="deleteDeiver(scope.row)" type="primary" size="small">删除</el-button>
+          <el-button @click="edit(scope.row)" type="primary" size="small">编辑</el-button>
+          <el-button @click="delete(scope.row)" type="primary" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <el-pagination
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="page.currentPage"
-      :page-sizes="page.sizes"
-      layout="total, sizes, prev, pager, next, jumper"
+      layout="total, prev, pager, next, jumper"
       :total="page.totalPage">
     </el-pagination>
   </div>
@@ -157,7 +155,7 @@
       return {
         headerShow: false,
         tableLoading: false,
-        driverInfo: [],
+        datas: [],
         postData: {
           startTime: `${year}-${month}-${date} 00:00:00`,
           endTime: `${year}-${month}-${date} 23:59:59`,
@@ -168,9 +166,7 @@
         keyWord: '',
         page: {
           currentPage: 1,
-          totalPage: 100,
-          sizes: [20, 40, 60, 80,100],
-          size: 20
+          totalPage: 100
         }
       }
     },
@@ -184,16 +180,16 @@
         this.headerShow = false;
         console.log(this.postData);
         this.tableLoading = true;
-        this.fetchInfo();
+        this.fetchDatas();
         setTimeout(function() {
           this.tableLoading = false;
-          this.driverInfo = [];
+          this.datas = [];
         }.bind(this),2000);
       },
       /* 获取信息 */
-      fetchInfo(currentPage=1,size=20) {
+      fetchDatas(currentPage=1) {
         let _this = this;
-        _this.driverInfo = [
+        _this.datas = [
           {
             "id": 1,
             "accountName": "一笑而过",
@@ -487,15 +483,14 @@
         this.$http.get('/api/xxxx',{
           params: {
             ..._this.postData,
-            currentPage,
-            size
+            currentPage
           }
         }).then(function(body) {
-          _this.driverInfo = body.data.results;
+          _this.datas = body.data.results;
         });
       },
       /* 编辑信息 */
-      editDeiver(row) {
+      edit(row) {
         this.$router.push({
           path: '/UserManage/WorkshopGroup/WorkshopEdit',
           query: {
@@ -504,33 +499,24 @@
         })
       },
       /* 删除信息 */
-      deleteDeiver(row) {
+      delete(row) {
         console.log(row.id)
       },
 
-      /* 分页 */
-      handleSizeChange(size) {
-        /* 因为element没有提供currentChange能拿到size的api，所以只能通过这样获取 */
-        this.page.size = size;
-        let currentPage = this.page.currentPage;
-        this.fetchInfo(currentPage,size);
-      },
       handleCurrentChange(currentPage) {
-        let size = this.page.size;
-        this.fetchInfo(currentPage,size);
+        this.fetchDatas(currentPage);
       }
     },
     computed: {
-      newDriverInfo() {
-        return this.driverInfo.filter((item) => {
+      newdatas() {
+        return this.datas.filter((item) => {
           return item.userName.toLowerCase().indexOf(this.keyWord.toLowerCase())!=-1;
         })
       }
     },
     created() {
       let currentPage = this.page.currentPage;
-      let size = this.page.size;
-      this.fetchInfo(currentPage,size);
+      this.fetchDatas(currentPage);
     }
   }
 </script>
