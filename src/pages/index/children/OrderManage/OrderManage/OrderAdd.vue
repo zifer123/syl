@@ -5,6 +5,16 @@
         <el-form-item label="订单编号">
           <el-input v-model="ruleForm.sn"></el-input>
         </el-form-item>
+
+        <el-form-item label="仓库选择" prop="warehouse">
+          <el-radio-group v-model="ruleForm.warehouse" @change="warehouseChange">
+            <el-radio :label="0">不选择</el-radio>
+            <el-radio :label="1">淡水仓</el-radio>
+            <el-radio :label="2">奥特仓</el-radio>
+            <el-radio :label="3">远古仓</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item label="汽配商" prop="merchat">
           <el-autocomplete v-model="ruleForm.merchat"
                            :fetch-suggestions="filterMerchat"
@@ -83,12 +93,6 @@
           <el-radio v-model="ruleForm.freightPaymentMode" label="1">月结</el-radio>
           <el-radio v-model="ruleForm.freightPaymentMode" label="2">现付</el-radio>
           <el-radio v-model="ruleForm.freightPaymentMode" label="2">到付</el-radio>
-        </el-form-item>
-
-        <el-form-item label="仓库选择" prop="desc">
-          <el-radio v-model="ruleForm.warehouse" label="1">淡水仓</el-radio>
-          <el-radio v-model="ruleForm.warehouse" label="2">奥特仓</el-radio>
-          <el-radio v-model="ruleForm.warehouse" label="2">远古仓</el-radio>
         </el-form-item>
 
         <el-form-item>
@@ -180,6 +184,7 @@
           options: [],
           freightPaymentMode: '1',
           type: [],
+          warehouse: 0,
           resource: '',
           desc: ''
         },
@@ -241,6 +246,7 @@
         this.merchatMessage.phone = row.phone?row.phone:'#';
         this.merchatMessage.address = row.address?row.address:'#';
         this.merchatMessage.fare = row.fare?row.fare:'#';
+        this.state.merchatFare = this.merchatMessage.fare;
       },
 
       /* 过滤维修厂 */
@@ -262,18 +268,21 @@
           {
             name: "小林汽修",
             id: 1,
+            fare: 15,
             address: "广东",
             phone: 13851461798
           },
           {
             name: "爱的汽修",
             id: 2,
+            fare: 15,
             address: "汕尾",
             phone: 13826459871
           },
           {
             name: "或二大汽修",
             id: 3,
+            fare: 15,
             address: "汕头",
             phone: 1385461178
           },
@@ -287,6 +296,7 @@
         this.workshopMessage.phone = row.phone?row.phone:'#';
         this.workshopMessage.address = row.address?row.address:'#';
         this.workshopMessage.fare = row.fare?row.fare:'#';
+        this.state.workshopFare = this.workshopMessage.fare;
       },
 
       /* 表单提交 */
@@ -302,11 +312,34 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+        this.state.merchatMessage = false;
+        this.state.workshopMessage = false;
+      },
+      //仓库选择，变更运费计算的基础
+      warehouseChange(val) {
+        this.resetForm('ruleForm');
+        this.ruleForm.warehouse = val;
+      },
+      computedFreight(type) {
+        let _this = this;
+        let types = {
+          0: function() {
+            return _this.state.handFare+_this.state.remoteAreaFare+_this.state.merchatFare+_this.state.workshopFare+_this.state.optionsFare;
+          },// 不选择仓库情况
+          1: function() {
+            return 15;
+          },// 淡水仓情况(只收15)
+          2: function() {
+            return _this.state.optionsFare;
+          },// 福田、罗湖情况(收特殊部件钱)
+        }
+        return types[type]();
       }
     },
     computed: {
       allPrice() {
-        return this.state.handFare+this.state.remoteAreaFare+this.state.merchatFare+this.state.workshopFare+this.state.optionsFare;
+          console.log(this.ruleForm.warehouse);
+        return this.computedFreight(this.ruleForm.warehouse);
       }
     },
     created() {

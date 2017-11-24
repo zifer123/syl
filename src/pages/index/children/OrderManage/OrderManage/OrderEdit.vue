@@ -5,6 +5,14 @@
         <el-form-item label="订单编号">
           <el-input v-model="ruleForm.sn"></el-input>
         </el-form-item>
+
+        <el-form-item label="仓库选择" prop="desc">
+          <el-radio v-model="ruleForm.warehouse" label="0">不选择</el-radio>
+          <el-radio v-model="ruleForm.warehouse" label="1">淡水仓</el-radio>
+          <el-radio v-model="ruleForm.warehouse" label="2">奥特仓</el-radio>
+          <el-radio v-model="ruleForm.warehouse" label="3">远古仓</el-radio>
+        </el-form-item>
+
         <el-form-item label="汽配商" prop="merchat">
           <el-autocomplete v-model="ruleForm.merchat"
                            :fetch-suggestions="filterMerchat"
@@ -83,12 +91,6 @@
           <el-radio v-model="ruleForm.freightPaymentMode" label="1">月结</el-radio>
           <el-radio v-model="ruleForm.freightPaymentMode" label="2">现付</el-radio>
           <el-radio v-model="ruleForm.freightPaymentMode" label="2">到付</el-radio>
-        </el-form-item>
-
-        <el-form-item label="仓库选择" prop="desc">
-          <el-radio v-model="ruleForm.warehouse" label="1">淡水仓</el-radio>
-          <el-radio v-model="ruleForm.warehouse" label="2">奥特仓</el-radio>
-          <el-radio v-model="ruleForm.warehouse" label="2">远古仓</el-radio>
         </el-form-item>
 
         <el-form-item>
@@ -180,6 +182,7 @@
           options: [],
           freightPaymentMode: '1',
           type: [],
+          warehouse: 0,
           resource: '',
           desc: ''
         },

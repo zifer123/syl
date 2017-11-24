@@ -377,9 +377,15 @@
 <script>
   export default {
     data() {
+      let newDate = new Date();
+      let year = newDate.getFullYear();
+      let month = newDate.getMonth()+1;
+      let date = newDate.getDate();
       return {
         filterMW: '',
         postData: {
+          startTime: `${year}-${month}-${date} 00:00:00`,
+          endTime: `${year}-${month}-${date} 23:59:59`,
           freightType: '',
         },// 发送的数据
         merchatInfo: [],// 汽配商所有信息
