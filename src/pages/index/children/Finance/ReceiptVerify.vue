@@ -133,7 +133,7 @@
       </span>
     </el-dialog>
 
-    <el-input placeholder="扫码" @keyup.native="scan" v-model="scanVal"></el-input>
+    <el-input placeholder="扫码" ref="scan" id="scan" @keyup.native="scan" v-model="scanVal"></el-input>
     <el-tag>总数：10</el-tag>
     <el-tag type="success">已回：10</el-tag>
     <el-tag type="warning">未回：10</el-tag>
@@ -972,6 +972,8 @@
               message: '扫描成功',
               type: 'success'
             });
+            console.log(this.$refs.scan);
+            this.$refs.scan.focus();
             mark = false;
             let audio = new Audio("/static/audio/success.mp3");
             audio.play();
