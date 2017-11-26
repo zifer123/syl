@@ -146,13 +146,14 @@
         return this.$store.state.rightRoutes;
       }
     },
+    beforeCreate() {
+      /* 第一次应该路由加载的是 */
+      this.$router.push('/');
+    },
     created() {
       let newRoutes = sessionStorage.getItem('newRoutes');
       /* 初始化菜单 */
       this.newRoutes = JSON.parse(newRoutes);
-      console.log(this.newRoutes);
-      /* 第一次应该路由加载的是 */
-//      this.$router.push('/home/dashBoard');
     }
   }
 </script>
