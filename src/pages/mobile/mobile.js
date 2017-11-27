@@ -2,6 +2,8 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import App from './App.vue'
+import { WechatPlugin } from 'vux'
+Vue.use(WechatPlugin)
 import Navigation from './Navigation.vue'
 import Annunciate from './pages/Annunciate.vue'
 import './assets/css/reset.css'

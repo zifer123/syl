@@ -3,7 +3,7 @@
     <view-box>
       <x-header style="width: 100%;position: absolute;left: 0px;top: 0px;z-index: 100;">
         时运来物流
-        <img slot="right" src="./assets/imgs/annunciate.png" alt="">
+        <img slot="right" style="top: 7px;" src="./assets/imgs/scan.png" alt="">
       </x-header>
       <transition :name="transitionName">
         <router-view class="child-view"></router-view>
@@ -55,5 +55,9 @@
     opacity: 0;
     -webkit-transform: translate(100%, 0);
     transform: translate(100%, 0);
+  }
+
+  .vux-header .vux-header-right {
+    top: 7px !important;
   }
 </style>

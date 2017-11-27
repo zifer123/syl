@@ -21,7 +21,7 @@
       </cell>
 
       <cell is-link title="已卸货">
-        <img slot="icon" src="./assets/imgs/offload.png" :link="{ path:'/annunciate' }" alt="">
+        <img slot="icon" style="width: 32px;" src="./assets/imgs/offload.png" :link="{ path:'/annunciate' }" alt="">
       </cell>
 
       <cell is-link title="未配送">
