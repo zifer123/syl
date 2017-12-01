@@ -153,7 +153,7 @@
       prop="date"
       sortable
       label="日期"
-      width="150">
+      width="180">
     </el-table-column>
     <el-table-column
       prop="sn"
@@ -265,7 +265,7 @@
         prop="date"
         sortable
         label="日期"
-        width="150">
+        width="180">
       </el-table-column>
       <el-table-column
         prop="sn"
