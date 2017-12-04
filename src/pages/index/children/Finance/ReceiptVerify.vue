@@ -1,10 +1,95 @@
 <template>
   <div>
+    <el-popover
+      ref="popover1"
+      placement="right"
+      width="400"
+      trigger="click">
+      <el-row>
+        <el-col :span="24">
+          配送单
+        </el-col>
+        <el-col :span="4">
+          <el-tag>数量: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>现金: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>挂账: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="info">月结: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="warning">现付: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger">到付: 5</el-tag>
+        </el-col>
+
+        <el-col :span="24">
+          已回单
+        </el-col>
+        <el-col :span="4">
+          <el-tag>数量: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>现金: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>挂账: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="info">月结: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="warning">现付: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger">到付: 5</el-tag>
+        </el-col>
+
+        <el-col :span="24">
+          未回单
+        </el-col>
+        <el-col :span="4">
+          <el-tag>数量: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>现金: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>挂账: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="info">月结: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="warning">现付: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag type="danger">到付: 5</el-tag>
+        </el-col>
+
+        <el-col :span="24">
+          退货单
+        </el-col>
+        <el-col :span="4">
+          <el-tag>数量: 5</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag>金额: 5</el-tag>
+        </el-col>
+      </el-row>
+    </el-popover>
+
     <h4 class="page-header">
       <el-button @click="showHeader" type="primary" plain>查询<i class="el-icon-zoom-in el-icon--right"></i></el-button>
-      <el-button type="info">打印</el-button>
-      <el-button type="warning">导出</el-button>
+      <el-button type="info" @click="preview">打印</el-button>
+      <el-button type="warning" @click="tableExport">导出</el-button>
       <el-button type="danger" @click="toggleTable1">切换显示</el-button>
+      <el-button type="primary" v-popover:popover1>查看统计信息</el-button>
     </h4>
 
     <el-dialog
@@ -134,10 +219,6 @@
     </el-dialog>
 
     <el-input placeholder="扫码" ref="scan" id="scan" @keyup.native="scan" v-model="scanVal"></el-input>
-    <el-tag>总数：10</el-tag>
-    <el-tag type="success">已回：10</el-tag>
-    <el-tag type="warning">未回：10</el-tag>
-    <el-tag type="danger">退货：10</el-tag>
     <el-tag type="info">计数：<span v-text="num"></span></el-tag>
     <el-table
     v-show="table1"
@@ -376,6 +457,8 @@
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
+      :closeOnClickModal="false"
+      :showClose="false"
       width="60%">
       <el-row class="dialogBox">
         <el-col :span="24">日期：{{ dialogData.date }}</el-col>
@@ -390,8 +473,8 @@
         <el-col :span="24">总收金额：<span class="red" v-text="dialogData.allPrice"></span></el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancel()">取 消</el-button>
-        <el-button @click="dialogVisible = false">修 改</el-button>
+        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="edit">修 改</el-button>
         <el-button type="primary" @click="sure()">确 定</el-button>
       </span>
     </el-dialog>
@@ -729,7 +812,7 @@
         orderSuccessInfo: [],//扫面成功表信息,
         orderSuccessArr: [],// 存储扫描成功的单号，提交用得到,
         dialogVisible: false,// 对话框显示
-        dialogData: {}, // 对话框数据,
+        dialogData: '', // 对话框数据,
         num: 0//计数
       }
     },
@@ -946,12 +1029,17 @@
       },
 
       /* 扫码事件 */
-      scan() {
+      scan(e) {
+        if(this.scanVal.length<=10) {
+          return;
+        }
         if(this.orderSuccessArr.indexOf(this.scanVal)!=-1) {
+            console.log(this.orderSuccessArr);
           let audio = new Audio("/static/audio/repeat.mp3");
           audio.play();
           this.scanVal = '';
-          this.$message({
+          this.$notify({
+            title: '扫描提示',
             message: '扫描重复',
             type: 'warning'
           });
@@ -961,17 +1049,22 @@
         for(let i = 0;i<this.orderInfo.length;i++) {
           if(this.orderInfo[i].sn == this.scanVal) {
             /* 判断是否扫描成功过 */
-            if(this.dialogData.index) {
+            if(this.dialogData) {
               this.sure();
             }
             this.orderSuccessArr.push(this.scanVal);// 存储扫描成功值
-            this.orderInfo[i].index = i;// 存储索引
             this.dialogData = this.orderInfo[i];
-            this.dialogVisible = true;
-            this.$message({
-              message: '扫描成功',
-              type: 'success'
-            });
+            this.orderInfo.splice(i,1);
+            setTimeout(() => {
+              this.dialogVisible = true;
+            },300);
+            setTimeout(() => {
+              this.$notify({
+                title: '扫描提示',
+                message: '扫描成功',
+                type: 'success'
+              });
+            },400);
             console.log(this.$refs.scan);
             this.$refs.scan.focus();
             mark = false;
@@ -984,7 +1077,8 @@
             console.log(2);
           let audio = new Audio("/static/audio/fail.mp3");
           audio.play();
-          this.$message({
+          this.$notify({
+            title: '扫描提示',
             message: '扫描失败',
             type: 'danger'
           });
@@ -997,17 +1091,22 @@
       },
 
       sure() {
-        let index = this.dialogData.index;
-        this.orderSuccessInfo.push(this.orderInfo[index]);//成功表格数据
-        this.orderInfo.splice(index,1);//删除数据
         this.dialogVisible = false;//不显示
+        this.orderSuccessInfo.push(this.dialogData);//成功表格数据
+        this.dialogData = '';// 为了判断（是否扫描成功过，等于取消过这次扫描或确认过这次扫描）
         this.num++;//计数
       },
       cancel() {
         this.dialogVisible = false;
         this.orderSuccessArr.splice(-1,1);
+        this.orderInfo.push(this.dialogData);
+        this.dialogData = '';
       },
       edit() {
+        this.dialogVisible = false;
+        this.orderSuccessArr.splice(-1,1);
+        this.orderInfo.push(this.dialogData);
+        this.dialogData = '';
         let sn = this.dialogData.sn;
         /* 判断是否是退货订单 */
       },
@@ -1015,9 +1114,70 @@
         this.num--;//计数
         let index = this.orderSuccessInfo.indexOf(row);// 获取索引，然后删掉
         this.orderSuccessInfo.splice(index,1);// 获取索引，然后删掉
+        let snIndex = this.orderSuccessArr.indexOf(row.sn);// 获取索引，然后删掉
+        this.orderSuccessArr.splice(snIndex,1);
         this.orderInfo.push(row);// 还原
+      },
+
+      /* 打印 */
+      preview() {
+        let test = $("<div>22222222222</div>");
+        test.print();
+      },
+      /* 导出 */
+      tableExport() {
+        // 判断是否有数据
+        if(this.orderSuccessInfo.length) {
+          // 创建一个表格
+          let tableInfo = `
+          <table border="1" style="width: 100%;text-align: center;color: #000;font-weight: bolder;">
+           <thead>
+              <tr>
+                <th rowspan="2">序号</th>
+                <th rowspan="2">日期</th>
+                <th rowspan="2">单号</th>
+                <th rowspan="2">汽配商</th>
+                <th rowspan="2">维修厂</th>
+                <th colspan="2">货款金额</th>
+                <th colspan="3">运费金额</th>
+                <th rowspan="2">总收金额</th>
+                <th rowspan="2">退货金额</th>
+              </tr>
+              <tr>
+                <th>现金</th>
+                <th>挂账</th>
+                <th>现付</th>
+                <th>到付</th>
+                <th>月结</th>
+              </tr>
+            </thead>
+          </table>
+          `;
+          tableInfo = $(tableInfo);
+          let tableBody = $("<tbody></tbody>");
+          for(let i = 0;i < this.orderSuccessInfo.length; i++) {
+            let tr = '<tr>';
+            for(let key in this.orderSuccessInfo[i]) {
+              if(key == 'detination') {
+                break;
+              }
+              tr += `<td style="mso-number-format:'\@';">${this.orderSuccessInfo[i][key]}</td>`;
+            }
+            tr += '</tr>';
+            tableBody.append(tr);
+          }
+          tableInfo.append(tableBody);
+          tableInfo.table2excel({
+            filename: '回单审核扫描提交记录表'
+          });
+        }else {
+            this.$message({
+              type: 'warning',
+              message: '没有可导出的数据'
+            })
+        }
       }
-    },
+  },
     computed: {
 
     },
@@ -1031,6 +1191,9 @@
 </script>
 
 <style scoped>
+  .statistics-title {
+    line-height: 32px;
+  }
   .flexBox {
     line-height: 35px;
     display: flex;
