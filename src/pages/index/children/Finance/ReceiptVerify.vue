@@ -364,7 +364,7 @@
         width="120">
       </el-table-column>
       <el-table-column
-        prop="merchatContact"
+        prop="merchat_contact"
         label="汽配商电话"
         width="300">
       </el-table-column>
@@ -838,9 +838,10 @@
         this.headerShow = !this.headerShow;
       },
       getResults() {
-        this.$http.get('/api/test.json').then(function(data) {
-          console.log(data);
-        })
+        this.$http.get('http://rap2api.taobao.org/app/mock/1311/GET//finance')
+          .then(function(data){
+            console.log(data);
+          })
       },
       /* 订单查询 */
       orderSearch() {

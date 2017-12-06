@@ -193,17 +193,16 @@
       :data="newOrderInfo"
       v-loading="tableLoading"
       height="450"
+      show-summary
       style="width: 100%;">
-      <el-table-column
-        fixed
-        type="index">
-      </el-table-column>
+
       <el-table-column
         prop="date"
         sortable
         label="日期"
         width="150">
       </el-table-column>
+
       <el-table-column
         prop="sn"
         label="单号"
@@ -911,6 +910,32 @@
           { "value": "南拳妈妈龙虾盖浇饭", "address": "普陀区金沙江路1699号鑫乐惠美食广场A13" }
         ];
       },
+
+      // 表尾合计
+      getSummaries(param) {
+        const {columns, data} = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '总价';
+            return;
+          }
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr);
+              if (!isNaN(value)) {
+                return prev + curr;
+              } else {
+                return prev;
+              }
+            }, 0);
+            sums[index] += ' 元';
+          } else {
+            sums[index] = 'N/A';
+          }
+        });
+      }
     },
     computed: {
       newOrderInfo() {
