@@ -153,9 +153,11 @@ require('echarts/lib/component/title')
 import './assets/css/reset.css'
 import './assets/iconfont/iconfont.css'
 
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 import Router from 'vue-router'
 Vue.use(Router)
-// import routes from './router'
 
 import Axios from 'axios'
 Vue.prototype.$http = Axios
@@ -165,8 +167,8 @@ import store from './store'
 Vue.config.productionTip = false
 
 /* 判断是否登录过 */
-if(sessionStorage.getItem('routes')) {
-  let routes = JSON.parse(sessionStorage.getItem('routes'));
+if(localStorage.getItem('routes')) {
+  let routes = JSON.parse(localStorage.getItem('routes'));
   for(let i = 0;i<routes.length;i++) {
     routes[i].path = '/'+routes[i].path;
     routes[i].component = () => import('./CommonView.vue');
@@ -198,16 +200,32 @@ if(sessionStorage.getItem('routes')) {
     {
       path: '/',
       title: '首页',
+      icon: 'iconfont icon-home',
+      meta: {
+        name: '首页'
+      },
       component: resolve => require(['./children/Home/DashBoard.vue'],resolve)
     },
     ...routes
   ];
 
   /* App.vue需要 */
-  sessionStorage.setItem('newRoutes',JSON.stringify(newRoutes));
+  localStorage.setItem('newRoutes',JSON.stringify(newRoutes));
   let router = new Router({
     routes: newRoutes
   });
+
+  /* 全局路由钩子,全局进度条 */
+  router.beforeEach((to,from,next) => {
+    console.log(to);
+    NProgress.start();
+    next();
+  });
+  router.afterEach(() => {
+    console.log('结束');
+    NProgress.done() // 结束Progress
+  });
+
   /* 初始化应用 */
   new Vue({
     el: '#app',

@@ -38,6 +38,13 @@
           this.$store.commit('addTab',routeInfo);
         }
       }
+    },
+    created() {
+      let arr = [];
+      this.$route.matched.forEach((item) => {
+        arr.push(item.meta.name);
+      });
+      this.$store.commit('changeBreadcrumb',arr);
     }
   }
 </script>

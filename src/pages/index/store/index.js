@@ -27,7 +27,8 @@ const state = {
       name: '/'
     }
   ],// 保存路由和title
-  rightRoutesActive: '/'
+  rightRoutesActive: '/',
+  breadcrumb: [] //存储面包屑导航
 };
 
 const mutations = {
@@ -53,6 +54,9 @@ const mutations = {
         break;
       }
     }
+  },
+  changeBreadcrumb(state,arr) {
+    state.breadcrumb = arr;
   }
 };
 

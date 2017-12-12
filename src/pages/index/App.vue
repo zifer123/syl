@@ -1,77 +1,112 @@
 <template>
   <el-container>
-    <el-header>头部,{{ rightRoutesActive }}  {{ this.$store.state.num }}</el-header>
-    <el-container>
-      <el-aside width="201px">
-        <el-menu
-          :default-active="activeNav"
-          background-color="#545c64"
-          text-color="#fff"
-          unique-opened
-          style="height: 100%;"
-          active-text-color="#ffd04b">
-          <template v-for="firstRoute in newRoutes" v-if="!firstRoute.children">
-            <el-menu-item :key="`${firstRoute.path}`" :index="`${firstRoute.path}`" @click.native="addTab({route: `${firstRoute.path}`,title: firstRoute.title})">
+    <el-aside width="201px">
+      <el-menu
+        :default-active="activeNav"
+        background-color="#545c64"
+        text-color="#fff"
+        unique-opened
+        style="height: 100%;"
+        active-text-color="#ffd04b">
+
+        <template v-for="firstRoute in newRoutes" v-if="!firstRoute.children">
+          <router-link :to="{path: firstRoute.path,query: {dd: new Date().getTime()}}" :key="`${firstRoute.path}`">
+            <el-menu-item :key="`${firstRoute.path}`" :index="`${firstRoute.path}`">
+              <i :class="firstRoute.icon"></i>
               <span slot="title">{{ firstRoute.title }}</span>
             </el-menu-item>
-          </template>
-          <template v-else>
-            <el-submenu :key="firstRoute.path" :index="firstRoute.path">
-              <template slot="title">
-                <span>{{ firstRoute.title }}</span>
-              </template>
+          </router-link>
+        </template>
+        <template v-else>
+          <el-submenu :key="firstRoute.path" :index="firstRoute.path">
+            <template slot="title">
+              <i :class="firstRoute.icon"></i>
+              <span>{{ firstRoute.title }}</span>
+            </template>
 
-              <!-- 判断是否是group -->
-              <template v-for="secondRoute in firstRoute.children">
-                <template v-if="secondRoute.group">
-                  <el-submenu :index="`${firstRoute.path}/${secondRoute.path}`" :key="`${firstRoute.path}/${secondRoute.path}`">
-                    <template slot="title">
-                      <i class="el-icon-menu"></i>
-                      <span>{{ secondRoute.title }}</span>
-                    </template>
-                    <!-- 只显示查看和添加，当然，在show为true的情况下 -->
-                    <el-menu-item v-for="thirdRoute in secondRoute.children" v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" @click.native="addTab({route: `${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`,title: `${secondRoute.title}/${thirdRoute.title}`})">
-                      <i class="el-icon-menu"></i>
-                      <span slot="title">{{ thirdRoute.title }}</span>
-                    </el-menu-item>
-                  </el-submenu>
-                </template>
-                <template v-else>
-                  <el-menu-item v-show="!secondRoute.hidden" :key="`${firstRoute.path}/${secondRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}`" @click.native="addTab({route: `${firstRoute.path}/${secondRoute.path}`,title: secondRoute.title})">
+            <!-- 判断是否是group -->
+            <template v-for="secondRoute in firstRoute.children">
+              <template v-if="secondRoute.group">
+                <el-submenu :index="`${firstRoute.path}/${secondRoute.path}`" :key="`${firstRoute.path}/${secondRoute.path}`">
+                  <template slot="title">
+                    <i class="el-icon-menu"></i>
+                    <span>{{ secondRoute.title }}</span>
+                  </template>
+                  <!-- 只显示查看和添加，当然，在show为true的情况下 -->
+                  <template v-for="thirdRoute in secondRoute.children">
+                    <router-link :to="{path: firstRoute.path+'/'+secondRoute.path+'/'+thirdRoute.path,query: {dd: new Date().getTime()}}" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`">
+                      <el-menu-item v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`">
+                        <i class="el-icon-menu"></i>
+                        <span slot="title">{{ thirdRoute.title }}</span>
+                      </el-menu-item>
+                    </router-link>
+                  </template>
+                </el-submenu>
+              </template>
+              <template v-else>
+                <router-link :to="{path: firstRoute.path+'/'+secondRoute.path,query: {dd: new Date().getTime()}}" :key="`${firstRoute.path}/${secondRoute.path}`">
+                  <el-menu-item v-show="!secondRoute.hidden" :key="`${firstRoute.path}/${secondRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}`">
                     <i class="el-icon-menu"></i>
                     <span slot="title">{{ secondRoute.title }}</span>
                   </el-menu-item>
-                </template>
+                </router-link>
               </template>
-            </el-submenu>
-          </template>
-        </el-menu>
-      </el-aside>
-      <el-main>
-        <el-tabs class="fixedTab" v-model="rightRoutesActive" type="card" closable @tab-click="clickTab" @tab-remove="removeTab">
-          <el-tab-pane
-            v-for="(item, index) in rightRoutes"
-            :key="item.name"
-            :label="item.title"
-            :name="item.name"
-          >
-          </el-tab-pane>
-        </el-tabs>
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
-      </el-main>
-    </el-container>
+            </template>
+          </el-submenu>
+        </template>
+      </el-menu>
+    </el-aside>
+    <el-main>
+      <el-row class="bread-crumb">
+        <el-col :span="18">
+          <transition-group name="el-zoom-in-top">
+            <template v-for="(item,index) in breadcrumb" v-text="i">
+              <el-button type="text" disabled v-text="item" :key="item"></el-button>
+              <!-- 判断最后一个不用加 -->
+              <i v-show="index!=breadcrumb.length-1" :key="item" class="el-icon-arrow-right"></i>
+            </template>
+          </transition-group>
+        </el-col>
+        <el-col :span="6" class="rightHeader">
+          <el-tooltip placement="top" effect="light">
+            <div slot="content">
+              <div style="border-bottom: 1px solid #ccc;">
+                <el-button type="text">查看信息</el-button>
+              </div>
+              <div>
+                <el-button @click="logout" type="text">退出</el-button>
+              </div>
+            </div>
+            <el-tag>Admin <i class="el-icon-arrow-down"></i></el-tag>
+          </el-tooltip>
+          <el-tooltip placement="top">
+            <div slot="content">
+              全屏展示
+            </div>
+            <i :class="isFullScreen?'iconfont icon-unFullScreen':'iconfont icon-fullScreen'" style="cursor: pointer;font-size: 20px;" @click="changeFullScreen"></i>
+          </el-tooltip>
+        </el-col>
+      </el-row>
+      <router-view style="padding: 10px 2px;" :key="routeKey"></router-view>
+    </el-main>
   </el-container>
 </template>
 
 <script>
   import { mapState,mapMutations } from 'vuex'
+  // 引入全屏插件
+  import screenfull from 'screenfull'
   export default {
     data() {
       return {
-        newRoutes: []
+        activeNav: '',
+        newRoutes: [],
+        // 控制是否全屏图标展示
+        isFullScreen: false
       }
+    },
+    component: {
+      screenfull
     },
     methods: {
       addTab(routeInfo) {
@@ -122,65 +157,60 @@
             this.$router.push(this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name);
           }
         }
+      },
+      // 登出
+      logout() {
+        localStorage.removeItem('routes');
+        localStorage.removeItem('newRoutes');
+        location.href = 'login.html';
+      },
+      //  控制是否全屏
+      changeFullScreen() {
+        this.isFullScreen = !this.isFullScreen;
+        screenfull.toggle();
       }
     },
     computed: {
-      /* 获取vuex的状态,给要时时可变的状态定义setter,要在vuex中定义mutaions改变状态，符合vuex逻辑 */
-      activeNav: {
-        get() {
-          return this.$store.state.activeNav;
-        },
-        set(newVal) {
-          this.$store.commit('changeActiveNav',newVal);
-        }
+      routeKey() {
+        console.log(this.$route.path+new Date().getTime());
+        return this.$route.path+new Date().getTime()
       },
-      rightRoutesActive: {
-        get() {
-          return this.$store.state.rightRoutesActive;
-        },
-        set(newVal) {
-          this.$store.commit('changeRightRoutesActive',newVal);
-        }
-      },
-      rightRoutes() {
-        return this.$store.state.rightRoutes;
+      breadcrumb() {
+        return this.$store.state.breadcrumb
       }
     },
-    beforeCreate() {
-      /* 第一次应该路由加载的是 */
-      this.$router.push('/');
-    },
     created() {
-      let newRoutes = sessionStorage.getItem('newRoutes');
+      let newRoutes = localStorage.getItem('newRoutes');
       /* 初始化菜单 */
       this.newRoutes = JSON.parse(newRoutes);
     }
   }
 </script>
 
-<style>
+<style scoped>
+  a {
+    display: inline-block;
+    width: 100%;
+    text-decoration: none;
+  }
   .el-main {
-    background: #f5f5f5;
     padding: 0;
     position: relative;
-  }
-  .fixedTab {
-    position: sticky;
-    top: 0;
-  }
-  .el-tabs__header {
-    background: #f5f5f5;
-  }
-  .el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-    border-bottom-color: silver;
-  }
-  .page-header {
-    border-bottom: 1px solid #ccc;
   }
   .el-container {
     height: 100%;
   }
-  .iconfont {
-    color: #f5f5f5 !important;
+  .el-menu .iconfont {
+    color: #f5f5f5;
+  }
+  .bread-crumb {
+    display: flex;
+    height: 60px;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+  }
+  /* 控制右边头部间距 */
+  .rightHeader .el-tooltip {
+    margin: 0 4px;
   }
 </style>

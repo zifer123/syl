@@ -1,5 +1,19 @@
 <template>
-  <keep-alive>
+  <transition name="el-zoom-in-center">
     <router-view></router-view>
-  </keep-alive>
+  </transition>
 </template>
+
+<script>
+  export default {
+    created() {
+      let arr = [];
+      this.$route.matched.forEach((item) => {
+        arr.push(item.meta.name);
+      });
+      this.$store.commit('changeBreadcrumb',arr);
+    }
+  }
+</script>
+
+

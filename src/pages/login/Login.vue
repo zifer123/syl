@@ -33,9 +33,9 @@
     },
     methods: {
       register() {
-          this.$http.get('/api/users').then(function(data) {
-            console.log(data);
-          });
+        this.$http.get('/api/users').then(function(data) {
+          console.log(data);
+        });
         let routes = [
           {
             path: 'WxSet',
@@ -252,7 +252,6 @@
             path: 'AreaManage',
             show: true,
             title: '区域管理',
-            icon: 'icon-areaSet',
             children: [
               {
                 path: 'LineList',
@@ -381,13 +380,50 @@
             ]
           }
         ];
-        /* 过滤路由，把要显示了路由存储（权限管理） */
-        for(let i=0;i<routes.length;i++) {
+        /* 过滤路由，把要显示了路由存储（权限管理），前端增加图标 */
+        for(let i = routes.length-1; i!=-1 ;i--) {
           if(!routes[i].show) {
             routes.splice(i,1);
+            continue;
+          }
+          routes[i].meta = {
+            name: routes[i].title
+          };
+          routes[i].children.forEach( (it,ind) => {
+            it.meta = {
+              name: it.title
+            };
+            // 利用一级不存在但不会报错的特性
+            if(it.children && it.children.length) {
+              it.children.forEach((item,index) => {
+                item.meta = {
+                  name: item.title
+                }
+              })
+            }
+          });
+          switch(routes[i].path) {
+            case 'WxSet':
+              routes[i].icon = 'iconfont icon-wxSet';
+              break;
+            case 'UserManage':
+              routes[i].icon = 'iconfont icon-userManage';
+              break;
+            case 'OrderManage':
+              routes[i].icon = 'iconfont icon-orderManage';
+              break;
+            case 'AreaManage':
+              routes[i].icon = 'iconfont icon-areaManage';
+              break;
+            case 'Finance':
+              routes[i].icon = 'iconfont icon-finance';
+              break;
+            case 'AdminSet':
+              routes[i].icon = 'iconfont icon-adminSet';
+              break;
           }
         }
-        sessionStorage.setItem('routes',JSON.stringify(routes));
+        localStorage.setItem('routes',JSON.stringify(routes));
         location.href = 'index.html';
       }
     }
