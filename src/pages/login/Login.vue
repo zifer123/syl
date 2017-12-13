@@ -382,26 +382,6 @@
         ];
         /* 过滤路由，把要显示了路由存储（权限管理），前端增加图标 */
         for(let i = routes.length-1; i!=-1 ;i--) {
-          if(!routes[i].show) {
-            routes.splice(i,1);
-            continue;
-          }
-          routes[i].meta = {
-            name: routes[i].title
-          };
-          routes[i].children.forEach( (it,ind) => {
-            it.meta = {
-              name: it.title
-            };
-            // 利用一级不存在但不会报错的特性
-            if(it.children && it.children.length) {
-              it.children.forEach((item,index) => {
-                item.meta = {
-                  name: item.title
-                }
-              })
-            }
-          });
           switch(routes[i].path) {
             case 'WxSet':
               routes[i].icon = 'iconfont icon-wxSet';
@@ -422,6 +402,29 @@
               routes[i].icon = 'iconfont icon-adminSet';
               break;
           }
+          if(!routes[i].show) {
+            routes.splice(i,1);
+            continue;
+          }
+          routes[i].meta = {
+            name: routes[i].title,
+            icon: routes[i].icon
+          };
+          routes[i].children.forEach( (it,ind) => {
+            it.meta = {
+              name: it.title,
+              icon: routes[i].icon
+            };
+            // 利用一级不存在但不会报错的特性
+            if(it.children && it.children.length) {
+              it.children.forEach((item,index) => {
+                item.meta = {
+                  name: item.title,
+                  icon: routes[i].icon,
+                }
+              })
+            }
+          });
         }
         localStorage.setItem('routes',JSON.stringify(routes));
         location.href = 'index.html';

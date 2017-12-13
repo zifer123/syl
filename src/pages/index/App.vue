@@ -1,12 +1,12 @@
 <template>
   <el-container>
-    <el-aside width="201px">
+    <el-aside width="204px">
       <el-menu
         :default-active="activeNav"
         background-color="#545c64"
         text-color="#fff"
         unique-opened
-        style="height: 100%;"
+        style="height: 100%;width: 201px;"
         active-text-color="#ffd04b">
 
         <template v-for="firstRoute in newRoutes" v-if="!firstRoute.children">
@@ -87,6 +87,29 @@
           </el-tooltip>
         </el-col>
       </el-row>
+      <el-row>
+          <div class="rightNavigation">
+            <transition-group name="el-zoom-in-center">
+              <span class="z-tag" :class="$route.path == item.path?'active' : ''" v-for="(item,index) in rightRoutes" @click="changeRoute(item)" v-show="index <= 8" :key="item.path">
+                <i :class="item.icon"></i>
+                {{ item.name }}
+                <i @click.stop="removeTab(item,$route.path == item.path?true:false)" class="el-icon-close"></i>
+              </span>
+            </transition-group>
+            <el-tooltip v-if="rightRoutes.length >= 9" effect="dark" placement="bottom">
+              <div slot="content">
+                <div v-for="item in rightRoutes" style="margin: 5px 0;">
+                  <span class="z-tag" :class="$route.path == item.path?'active' : ''" @click="changeRoute(item)">
+                    <i :class="item.icon"></i>
+                    {{ item.name }}
+                    <i @click.stop="removeTab(item,$route.path == item.path?true:false)" class="el-icon-close"></i>
+                  </span>
+                </div>
+              </div>
+              <span class="z-tag" style="border: 1px solid #ffba00;">标签选项 <i class="el-icon-arrow-down"></i></span>
+            </el-tooltip>
+          </div>
+      </el-row>
       <router-view style="padding: 10px 2px;" :key="routeKey"></router-view>
     </el-main>
   </el-container>
@@ -99,7 +122,6 @@
   export default {
     data() {
       return {
-        activeNav: '',
         newRoutes: [],
         // 控制是否全屏图标展示
         isFullScreen: false
@@ -109,6 +131,15 @@
       screenfull
     },
     methods: {
+      changeRoute(routeInfo) {
+        this.$router.push({
+          path: routeInfo.path,
+          query: {
+            dd: new Date().getTime()
+          }
+        });
+        this.$store.commit('changeActiveNav',routeInfo.path);
+      },
       addTab(routeInfo) {
         // 路由还是组件跳，因为vuex只管状态，切记
         this.$router.push({
@@ -140,22 +171,19 @@
           path: tab.name
         });
       },
-      removeTab(tab) {
-        /* tab（tab的name） */
-        if(tab == '/') {
-          this.$message({
-            showClose: true,
-            message: '首页不允许关闭',
-            type: 'warning'
+      removeTab(routeInfo,isActive) {
+        /*
+        * routeInfo：  路由信息
+        * isActive：是否处于选中状态
+        * */
+        this.$store.commit('removeTab',routeInfo);
+        if(isActive) {
+          this.$router.push({
+            path: this.$store.state.rightRoutes[this.$store.state.index].path,
+            query: {
+              dd: new Date().getTime()
+            }
           });
-        }else {
-          this.$store.commit('removeTab',tab);
-          /* 判断关闭的是否是active */
-          if(this.rightRoutesActive == tab) {
-            /* 如果关闭的是处于active的，则让arr最后一个变成active */
-            this.rightRoutesActive = this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name;
-            this.$router.push(this.$store.state.rightRoutes[this.$store.state.rightRoutes.length-1].name);
-          }
         }
       },
       // 登出
@@ -172,11 +200,19 @@
     },
     computed: {
       routeKey() {
-        console.log(this.$route.path+new Date().getTime());
         return this.$route.path+new Date().getTime()
       },
+      // 右边面包屑
       breadcrumb() {
-        return this.$store.state.breadcrumb
+        return this.$store.state.breadcrumb;
+      },
+      // 右边路由
+      rightRoutes() {
+        return this.$store.state.rightRoutes;
+      },
+      // 左边导航active状态
+      activeNav() {
+        return this.$store.state.activeNav;
       }
     },
     created() {
@@ -194,9 +230,9 @@
     text-decoration: none;
   }
   .el-main {
-    padding: 0;
-    position: relative;
-  }
+     padding: 0;
+     position: relative;
+   }
   .el-container {
     height: 100%;
   }
@@ -205,12 +241,48 @@
   }
   .bread-crumb {
     display: flex;
-    height: 60px;
+    height: 50px;
     align-items: center;
     border-bottom: 1px solid #ccc;
   }
   /* 控制右边头部间距 */
   .rightHeader .el-tooltip {
     margin: 0 4px;
+  }
+
+  /* 右边导航 */
+  .rightNavigation {
+    background: #F0F0F0;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .z-tag {
+    height: 32px;
+    line-height: 30px;
+    padding: 5px 10px;
+    background: #fff;
+    color: #495060;
+    margin: 0 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .5s linear;
+  }
+  .z-tag:hover {
+    background: #545C64;
+    color: #fff;
+  }
+  .z-tag.active {
+    background: #545C64;
+    color: #fff;
+  }
+  .z-tag .el-icon-close {
+    z-index: 2;
+    transition: all .5s linear;
+  }
+  .z-tag .el-icon-close:hover {
+    color: #f00;
+    background: #fff;
+    border-radius: 50%;
   }
 </style>

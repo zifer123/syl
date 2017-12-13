@@ -23,36 +23,38 @@ const state = {
   addressInfo,// 省市区街道
   rightRoutes: [
     {
-      title: '首页',
-      name: '/'
+      name: '首页',
+      path: '/',
+      icon: 'iconfont icon-home'
     }
   ],// 保存路由和title
-  rightRoutesActive: '/',
-  breadcrumb: [] //存储面包屑导航
+  breadcrumb: [], //存储面包屑导航,
+  index: '' //保存索引
 };
 
 const mutations = {
-  /* 改变右边路由active状态 */
-  changeRightRoutesActive(state,route) {
-    state.rightRoutesActive = route;
+  // 添加右边导航
+  addRightRoutes(state,routeInfo) {
+    /* 限制只保存最近的7个，除了首页！ */
+    // if(state.rightRoutes.length >= 8) {
+    //   // 删除第二个
+    //   state.rightRoutes.splice(1,1);
+    // }
+    state.rightRoutes.push(routeInfo);
+    this.commit('changeActiveNav',routeInfo.path);
   },
-  /* 改变左边导航的active状态 */
-  changeActiveNav(state,nav) {
-    state.activeNav = nav;
+  // 改变左边路由选中状态
+  changeActiveNav(state,activeNav) {
+    state.activeNav = activeNav;
   },
-  /* 添加右边路由数组的信息 */
-  addTab(state,routeInfo) {
-    state.rightRoutes.push({
-      title: routeInfo.title,
-      name: routeInfo.route
-    });
-  },
-  removeTab(state,tab) {
-    for(let i = 0;i<state.rightRoutes.length;i++) {
-      if(state.rightRoutes[i].name == tab) {
-        state.rightRoutes.splice(i,1);
-        break;
-      }
+  removeTab(state,routeInfo,isActive) {
+    alert(routeInfo)
+    alert(isActive)
+    let index = state.rightRoutes.indexOf(routeInfo);
+    state.rightRoutes.splice(index,1);
+    if(isActive) {
+      alert(index);
+      state.index = index;
     }
   },
   changeBreadcrumb(state,arr) {

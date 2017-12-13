@@ -195,7 +195,6 @@ if(localStorage.getItem('routes')) {
     }
   }
 
-  console.log(routes);
   let newRoutes = [
     {
       path: '/',
@@ -217,7 +216,6 @@ if(localStorage.getItem('routes')) {
 
   /* 全局路由钩子,全局进度条 */
   router.beforeEach((to,from,next) => {
-    console.log(to);
     NProgress.start();
     next();
   });

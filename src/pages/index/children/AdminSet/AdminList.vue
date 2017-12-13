@@ -1,5 +1,5 @@
-<tempalte>
+<template>
   <div>
     管理员列表
   </div>
-</tempalte>
+</template>
