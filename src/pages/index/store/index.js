@@ -40,6 +40,14 @@ const mutations = {
     //   // 删除第二个
     //   state.rightRoutes.splice(1,1);
     // }
+    let rightRoutes = state.rightRoutes;
+    let rightRoutesLen = state.rightRoutes.length;
+    for(let i = 0;i<rightRoutesLen;i++) {
+      if(rightRoutes[i].path == routeInfo.path) {
+        // 已经存在，不重复添加
+        return ;
+      }
+    }
     state.rightRoutes.push(routeInfo);
     this.commit('changeActiveNav',routeInfo.path);
   },
@@ -47,15 +55,10 @@ const mutations = {
   changeActiveNav(state,activeNav) {
     state.activeNav = activeNav;
   },
-  removeTab(state,routeInfo,isActive) {
-    alert(routeInfo)
-    alert(isActive)
+  removeTab(state,routeInfo) {
     let index = state.rightRoutes.indexOf(routeInfo);
     state.rightRoutes.splice(index,1);
-    if(isActive) {
-      alert(index);
-      state.index = index;
-    }
+    state.index = index-1;
   },
   changeBreadcrumb(state,arr) {
     state.breadcrumb = arr;

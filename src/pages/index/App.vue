@@ -88,29 +88,35 @@
         </el-col>
       </el-row>
       <el-row>
-          <div class="rightNavigation">
-            <transition-group name="el-zoom-in-center">
+        <div class="rightNavigation">
+          <transition-group name="el-zoom-in-center">
               <span class="z-tag" :class="$route.path == item.path?'active' : ''" v-for="(item,index) in rightRoutes" @click="changeRoute(item)" v-show="index <= 8" :key="item.path">
                 <i :class="item.icon"></i>
                 {{ item.name }}
                 <i @click.stop="removeTab(item,$route.path == item.path?true:false)" class="el-icon-close"></i>
               </span>
-            </transition-group>
-            <el-tooltip v-if="rightRoutes.length >= 9" effect="dark" placement="bottom">
-              <div slot="content">
-                <div v-for="item in rightRoutes" style="margin: 5px 0;">
+          </transition-group>
+          <el-tooltip v-if="rightRoutes.length >= 9" effect="dark" placement="bottom">
+            <div slot="content">
+              <div v-for="item in rightRoutes" style="margin: 5px 0;">
                   <span class="z-tag" :class="$route.path == item.path?'active' : ''" @click="changeRoute(item)">
                     <i :class="item.icon"></i>
                     {{ item.name }}
                     <i @click.stop="removeTab(item,$route.path == item.path?true:false)" class="el-icon-close"></i>
                   </span>
-                </div>
               </div>
-              <span class="z-tag" style="border: 1px solid #ffba00;">标签选项 <i class="el-icon-arrow-down"></i></span>
-            </el-tooltip>
-          </div>
+            </div>
+            <span class="z-tag" style="border: 1px solid #ffba00;">标签选项 <i class="el-icon-arrow-down"></i></span>
+          </el-tooltip>
+        </div>
       </el-row>
-      <router-view style="padding: 10px 2px;" :key="routeKey"></router-view>
+
+      <!-- 解决路由调到首页又跳到其他路由，其他路由缓存消失的情况，按照我理解，就是，可能，因为全部一级路由都是挂载这个router-view显示的，当重新跳到首页时，因为二三级router-view没有经过显示，所以系统把缓存清除掉，为什么二级路由不会清楚，因为引用了同一个commonView.vue，所以不会，当第一级router-view加上keep-alive之后，因为是从缓存读取的，所以不会存在router-view正则深度匹配过程 -->
+      <keep-alive>
+        <router-view style="padding: 10px 2px;"></router-view>
+      </keep-alive>
+      <!--<router-view style="padding: 10px 2px;"></router-view>-->
+      <!--<router-view style="padding: 10px 2px;" :key="routeKey"></router-view>-->
     </el-main>
   </el-container>
 </template>
@@ -135,7 +141,7 @@
         this.$router.push({
           path: routeInfo.path,
           query: {
-            dd: new Date().getTime()
+            dd: routeInfo.dd
           }
         });
         this.$store.commit('changeActiveNav',routeInfo.path);
@@ -173,13 +179,23 @@
       },
       removeTab(routeInfo,isActive) {
         /*
-        * routeInfo：  路由信息
-        * isActive：是否处于选中状态
-        * */
+         * routeInfo：  路由信息
+         * isActive：是否处于选中状态
+         * */
+        /* 首页不删除 */
+        if(routeInfo.path == '/') {
+          this.$message({
+            type: 'warning',
+            message: '首页不删除'
+          });
+          return;
+        }
         this.$store.commit('removeTab',routeInfo);
         if(isActive) {
+          let routeInfo = this.$store.state.rightRoutes[this.$store.state.index];
+          this.$store.commit('changeActiveNav',routeInfo.path);
           this.$router.push({
-            path: this.$store.state.rightRoutes[this.$store.state.index].path,
+            path: routeInfo.path,
             query: {
               dd: new Date().getTime()
             }
@@ -199,9 +215,6 @@
       }
     },
     computed: {
-      routeKey() {
-        return this.$route.path+new Date().getTime()
-      },
       // 右边面包屑
       breadcrumb() {
         return this.$store.state.breadcrumb;
@@ -230,9 +243,9 @@
     text-decoration: none;
   }
   .el-main {
-     padding: 0;
-     position: relative;
-   }
+    padding: 0;
+    position: relative;
+  }
   .el-container {
     height: 100%;
   }

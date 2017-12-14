@@ -219,8 +219,26 @@ if(localStorage.getItem('routes')) {
     NProgress.start();
     next();
   });
-  router.afterEach(() => {
-    console.log('结束');
+  // 此处操作APP.vue里面的rightRoutes,
+  router.afterEach((to) => {
+    console.log(to);
+    let arr = [];
+    let routeInfo = {
+      name: ''
+    };
+    to.matched.forEach((item,index) => {
+      arr.push(item.meta.name);
+      if(index >= 1) {
+        routeInfo.name += item.meta.name+'/';
+      }
+    });
+    /* 去除最后一个的 '/' */
+    routeInfo.name = routeInfo.name.substr(0,routeInfo.name.length-1);
+    routeInfo.path = to.path;
+    routeInfo.icon = to.meta.icon;
+    routeInfo.dd = to.query.dd;
+    store.commit('addRightRoutes',routeInfo);
+    store.commit('changeBreadcrumb',arr);
     NProgress.done() // 结束Progress
   });
 

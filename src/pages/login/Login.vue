@@ -422,6 +422,12 @@
                   name: item.title,
                   icon: routes[i].icon,
                 }
+                /* 为列表级页面添加keep-alive属性，让页面缓存起来 */
+                switch (item.path) {
+                  case 'DriverCheck':
+                    item.meta.keepAlive = true;
+                    break;
+                }
               })
             }
           });

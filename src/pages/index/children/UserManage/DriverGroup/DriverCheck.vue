@@ -510,6 +510,7 @@
       }
     },
     created() {
+        console.log(2);
       let currentPage = this.page.currentPage;
       this.fetchDatas(currentPage);
     }

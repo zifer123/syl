@@ -3,3 +3,9 @@
     操作日志
   </div>
 </template>
+
+<script>
+  export default {
+
+  }
+</script>
