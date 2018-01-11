@@ -221,7 +221,6 @@ if(localStorage.getItem('routes')) {
   });
   // 此处操作APP.vue里面的rightRoutes,
   router.afterEach((to) => {
-    console.log(to);
     let arr = [];
     let routeInfo = {
       name: ''
@@ -234,11 +233,11 @@ if(localStorage.getItem('routes')) {
     });
     /* 去除最后一个的 '/' */
     routeInfo.name = routeInfo.name.substr(0,routeInfo.name.length-1);
-    routeInfo.path = to.path;
-    routeInfo.icon = to.meta.icon;
-    routeInfo.dd = to.query.dd;
-    store.commit('addRightRoutes',routeInfo);
+    document.title = "时运来物流：" + routeInfo.name;
+    // 改变面包屑
     store.commit('changeBreadcrumb',arr);
+    // 改变左边导航状态
+    store.commit('changeActiveNav',to.path);
     NProgress.done() // 结束Progress
   });
 

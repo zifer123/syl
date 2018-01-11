@@ -21,48 +21,17 @@ axios.get('/api/addressInfo').then(function(body) {
 const state = {
   activeNav: '/',
   addressInfo,// 省市区街道
-  rightRoutes: [
-    {
-      name: '首页',
-      path: '/',
-      icon: 'iconfont icon-home'
-    }
-  ],// 保存路由和title
-  breadcrumb: [], //存储面包屑导航,
-  index: '' //保存索引
+  breadcrumb: [] //存储面包屑导航,
 };
 
 const mutations = {
-  // 添加右边导航
-  addRightRoutes(state,routeInfo) {
-    /* 限制只保存最近的7个，除了首页！ */
-    // if(state.rightRoutes.length >= 8) {
-    //   // 删除第二个
-    //   state.rightRoutes.splice(1,1);
-    // }
-    let rightRoutes = state.rightRoutes;
-    let rightRoutesLen = state.rightRoutes.length;
-    for(let i = 0;i<rightRoutesLen;i++) {
-      if(rightRoutes[i].path == routeInfo.path) {
-        // 已经存在，不重复添加
-        return ;
-      }
-    }
-    state.rightRoutes.push(routeInfo);
-    this.commit('changeActiveNav',routeInfo.path);
+  changeBreadcrumb(state,arr) {
+    state.breadcrumb = arr;
   },
   // 改变左边路由选中状态
   changeActiveNav(state,activeNav) {
     state.activeNav = activeNav;
   },
-  removeTab(state,routeInfo) {
-    let index = state.rightRoutes.indexOf(routeInfo);
-    state.rightRoutes.splice(index,1);
-    state.index = index-1;
-  },
-  changeBreadcrumb(state,arr) {
-    state.breadcrumb = arr;
-  }
 };
 
 export default new Vuex.Store({

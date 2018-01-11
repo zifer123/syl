@@ -486,12 +486,14 @@
       },
       /* 编辑信息 */
       edit(row) {
-        this.$router.push({
+        const { href } = this.$router.resolve({
           path: '/UserManage/DriverGroup/DriverEdit',
           query: {
             id: row.id
           }
-        })
+        });
+        console.log(href);
+        window.open(href,'_blank');
       },
       /* 删除信息 */
       delete(row) {
@@ -510,7 +512,7 @@
       }
     },
     created() {
-        console.log(2);
+        console.log(this.$data);
       let currentPage = this.page.currentPage;
       this.fetchDatas(currentPage);
     }
