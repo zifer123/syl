@@ -5,7 +5,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import { Loading } from 'element-ui';
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 let loadingInstance = Loading.service({
   lock: true,
@@ -14,7 +14,7 @@ let loadingInstance = Loading.service({
 });
 /* 在vuex存储不会变的东西，可以减少http请求 */
 let addressInfo = [];
-axios.get('/api/addressInfo').then(function(body) {
+axios.get('http://localhost:3004/addressInfo').then(function(body) {
   loadingInstance.close();
   addressInfo.push(...body.data);
 });

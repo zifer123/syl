@@ -28,14 +28,14 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/api': {
-        target: 'http://127.0.0.1:3004',
-        // target: 'http://ec2-52-80-50-159.cn-north-1.compute.amazonaws.com.cn:9013/web',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
-      }
+      // '/api': {
+      //   target: 'http://127.0.0.1:3004',
+      //   // target: 'http://ec2-52-80-50-159.cn-north-1.compute.amazonaws.com.cn:9013/web',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': ''
+      //   }
+      // }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
