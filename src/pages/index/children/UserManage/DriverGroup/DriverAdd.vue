@@ -19,6 +19,7 @@
           filterable
           style="width: 100%"
           :props="props"
+          @change="test"
           v-model="ruleForm.addressInfo"
         ></el-cascader>
       </el-form-item>
@@ -62,7 +63,7 @@
         addressInfo: this.$store.state.addressInfo, //存储地址信息
         lines: [],//线路
         ruleForm: {
-          addressInfo: [],//['广东省','深圳市','罗湖区','桂园街道']
+          addressInfo: ["广东省", "韶关市"],//['广东省','深圳市','罗湖区','桂园街道']
           level: 3,
           lines: [23,24]
         }, //存储发送的信息（初始化的信息）
@@ -102,6 +103,10 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      test(v) {
+
+          console.log(v);
       }
     },
     activated() {
