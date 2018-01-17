@@ -59,11 +59,11 @@
     <el-main>
       <el-row class="bread-crumb">
         <el-col :span="18">
-          <transition-group name="el-zoom-in-top">
-            <template v-for="(item,index) in breadcrumb" v-text="i">
-              <el-button type="text" disabled v-text="item" :key="item"></el-button>
+          <transition-group name="rotate">
+            <template v-for="(item,index) in breadcrumb">
+              <el-button type="text" disabled v-text="item" :key="`${index}${Math.random()}`"></el-button>
               <!-- 判断最后一个不用加 -->
-              <i v-show="index!=breadcrumb.length-1" :key="item" class="el-icon-arrow-right"></i>
+              <i v-show="index!=breadcrumb.length-1" :key="`${index}}`" class="el-icon-arrow-right"></i>
             </template>
           </transition-group>
         </el-col>
@@ -171,5 +171,12 @@
   /* 控制右边头部间距 */
   .rightHeader .el-tooltip {
     margin: 0 4px;
+  }
+  .rotate-enter-active,.rotate-leave {
+    transform: translateY(0) rotate(0deg);
+    transition: all .9s linear;
+  }
+  .rotate-enter,.rotate-leave-active {
+    transform: translateY(-45px) rotate(180deg);
   }
 </style>
