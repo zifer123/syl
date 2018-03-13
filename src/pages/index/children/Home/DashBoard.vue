@@ -7,6 +7,12 @@
 
 <script>
   export default {
-
+    mounted() {
+        this.$http.get('/api/users').then((body) => {
+            console.log(body);
+        });
+    }
   }
 </script>
+
+

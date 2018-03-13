@@ -34,8 +34,8 @@
                   </template>
                   <!-- 只显示查看和添加，当然，在show为true的情况下 -->
                   <template v-for="thirdRoute in secondRoute.children">
-                    <router-link :to="{path: firstRoute.path+'/'+secondRoute.path+'/'+thirdRoute.path,query: {dd: new Date().getTime()}}" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`">
-                      <el-menu-item v-show="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`">
+                    <router-link v-if="thirdRoute.show&&thirdRoute.title=='添加'||thirdRoute.title=='查看'" :to="{path: firstRoute.path+'/'+secondRoute.path+'/'+thirdRoute.path,query: {dd: new Date().getTime()}}" :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`">
+                      <el-menu-item :key="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`" :index="`${firstRoute.path}/${secondRoute.path}/${thirdRoute.path}`">
                         <i class="el-icon-menu"></i>
                         <span slot="title">{{ thirdRoute.title }}</span>
                       </el-menu-item>

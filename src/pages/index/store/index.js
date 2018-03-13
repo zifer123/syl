@@ -14,9 +14,9 @@ let loadingInstance = Loading.service({
 });
 /* 在vuex存储不会变的东西，可以减少http请求 */
 let addressInfo = [];
-axios.get('http://localhost:3004/addressInfo').then(function(body) {
+axios.get('api/address').then(function(body) {
   loadingInstance.close();
-  addressInfo.push(...body.data);
+  addressInfo.push(...body.data.data);
 });
 const state = {
   activeNav: '/',

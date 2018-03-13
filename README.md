@@ -9,7 +9,7 @@
 npm install
 
 # serve with hot reload at localhost:8080
-先npm run mock  （模拟接口） 再；挺开一个控制台，npm run dev
+npm run dev
 
 # build for production with minification
 npm run build
