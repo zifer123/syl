@@ -56,14 +56,14 @@
       return {
         num: this.$store.state.num,
         props: {
-          value: 'name',
+          value: 'code',
           label: 'name',
           children: 'childs'
         },// 存储级联动prop的信息
         addressInfo: this.$store.state.addressInfo, //存储地址信息
         lines: [],//线路
         ruleForm: {
-          addressInfo: ["广东省", "韶关市"],//['广东省','深圳市','罗湖区','桂园街道']
+          addressInfo: ["44","4403", "440303","440303001"],//['广东省','深圳市','罗湖区','桂园街道']
           level: 3,
           lines: [23,24]
         }, //存储发送的信息（初始化的信息）
