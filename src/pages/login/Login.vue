@@ -55,7 +55,6 @@
             return;
           }
           console.log('成功');
-          return;
           let routes = [
             {
               path: 'WxSet',
